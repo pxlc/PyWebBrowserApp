@@ -59,11 +59,9 @@ class CustomPyWebBrowserApp(PyWebBrowserAppBase):
     # --------------------------------------------------------------------------------------------------------
     def setup_extra_template_vars(self):
 
-        res_image_path = os.path.realpath( os.path.join(PYWEBBROWSERAPP_ROOT, 'res', 'images') )
-        res_icon_path = os.path.realpath( os.path.join(PYWEBBROWSERAPP_ROOT, 'res', 'icons') )
+        res_icon_path = '%s/res/icons' % PYWEBBROWSERAPP_ROOT
 
         extra_vars = {
-            'RES_IMG_PATH': res_image_path.replace('\\', '/'),
             'RES_ICON_PATH': res_icon_path.replace('\\', '/'),
         }
         return extra_vars

@@ -111,7 +111,10 @@ class CustomPyWebBrowserApp(PyWebBrowserAppBase):
         app_window_title = 'Long Running Task'
         app_header = '%s Example' % app_window_title
 
+        res_icon_path = '%s/res/icons' % PYWEBBROWSERAPP_ROOT
+
         extra_vars = {
+            'RES_ICON_PATH': res_icon_path.replace('\\', '/'),
             'APP_WINDOW_TITLE': app_window_title,
             'APP_HEADER': app_header,
         }
