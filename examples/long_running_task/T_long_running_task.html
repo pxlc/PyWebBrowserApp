@@ -1,0 +1,207 @@
+<html>
+
+<head>
+    <title>{{ APP_WINDOW_TITLE }}</title>
+
+<!--
+<link rel="icon" 
+      type="image/png" 
+      href="file://{{ IB_ICONS_PATH }}/misc/version_upload_64x64.png">
+-->
+
+<!-- [ Bootstrap ] -->
+<link href="https://bootswatch.com/4/sandstone/bootstrap.css" rel="stylesheet">
+<script language="JavaScript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script language="JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script language="JavaScript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+<!-- [ PyWebBrowserApp JS ] -->
+<script type="text/javascript" src="{{ PYWEBBROWSERAPP_JS_URL }}"></script>
+
+<script type="text/javascript">
+
+//
+// PyWebBrowserApp
+//
+
+var g_percent_complete = 0;
+
+function show_popup_message(title, message) {
+    $('#popup_dialog_title').html(title);
+    $('#popup_dialog_text').html(message);
+    $("#popup_dialog").modal("show");
+}
+
+pwba.register_op_handler(
+"popup_message", function(op_data) {
+    // do something here
+    show_popup_message(op_data.title, op_data.message);
+});
+
+pwba.register_task("DirectoryListing",  // task_name
+function(msg_lines, msg_level) // task message_fn
+{
+    var msg_level_color = "blue";
+    var msg_line_prefix = "[INFO]: ";
+
+    if (msg_level == "debug") {
+        msg_level_color = "green";
+        msg_line_prefix = "[DEBUG]: ";
+    }
+    else if (msg_level == "warn") {
+        msg_level_color = "orange";
+        msg_line_prefix = "[WARNING]: ";
+    }
+    else if (msg_level == "error") {
+        msg_level_color = "red";
+        msg_line_prefix = "[ERROR]: ";
+    }
+
+    var msg_log_div = $("#message_log");
+
+    for (var c=0; c < msg_lines.length; c++) {
+        // output each line
+        var m_line = msg_lines[c];
+        if (c == 0)
+            m_line = msg_line_prefix + m_line;
+
+        var html_str = '<span style="color: ' + msg_level_color +';">' + to_html_safe_text(m_line) +
+                        "</span><br/>";
+
+        msg_log_div.append(html_str);
+    }
+    msg_log_scroll_to_end();
+},
+function(percent_complete) // task update_progress_fn
+{
+    if (percent_complete > g_percent_complete) {
+        g_percent_complete = percent_complete;
+        set_progress_bar_percentage(g_percent_complete);
+    }
+},
+function(completion_status, completion_message) // task task_ended_fn
+{
+    // re-enable UI elements to select and process another episode
+    $("#execute_btn").prop("disabled", false);
+    $("#folder_path").prop("disabled", false);
+
+    // just make sure we've scrolled log to the end
+    msg_log_scroll_to_end();
+
+    show_popup_message('Processing Completed', 'Processing completed with status "' + completion_status +
+                        '" and return message of "' + completion_message + '"');
+});
+
+function to_html_safe_text(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function clicked() {
+    var input_folder_path = $("#folder_path").val();
+    if (input_folder_path) {
+        $("#execute_btn").prop("disabled", true);
+        $("#folder_path").prop("disabled", true);
+        g_percent_complete = 0;
+        set_progress_bar_percentage(0);
+        pwba.to_python("process_folder_path", {"folder_path": input_folder_path});
+    }
+    else {
+        alert("No folder path entered!");
+    }
+}
+
+function msg_log_scroll_to_end()
+{
+    var msg_log_div = $("#message_log");
+    var total_height = 80; // add in some height to adjust for padding and such
+    msg_log_div.children("span").each(function(index) { total_height = total_height + $(this).height(); });
+    msg_log_div.scrollTop(total_height);
+}
+
+function set_progress_bar_percentage(percent_int) {
+    var p_bar_div = $("#progress_bar");
+    p_bar_div.prop("aria-valuenow", "" + percent_int);
+    p_bar_div.css("width", "" + percent_int + "%");
+}
+
+</script>
+
+<style>
+
+.app-section {
+    padding: 10px 20px 10px 20px;  /* top right bottom left */
+}
+
+.app-msg-log-outer {
+    height: 300px;
+    max-height: 300px;
+}
+
+.app-msg-log {
+    padding: 8px 16px 8px 16px;  /* top right bottom left */
+    background-color: white;
+    border-radius: 4px;
+    overflow-y: scroll;
+    word-wrap: break-word;
+    font-family: Courier New, monospace;
+    font-weight: bold;
+    height: 100%;
+    max-height: 100%;
+}
+
+</style>
+
+</head>
+<body onload="pwba.init('{{ SESSION_ID }}', {{ PORT }});">
+
+    <div class="app-section">
+        <h1>{{ APP_HEADER }}</h1>
+    </div>
+
+    <div class="app-section">
+        <div class="form-group">
+            <label class="col-form-label" for="inputDefault">Folder Path:</label>
+            <input type="text" class="form-control" placeholder="enter folder path" id="folder_path">
+        </div>
+    </div>
+
+    <div class="app-section">
+        <button id="execute_btn" type="button" class="btn btn-success" onclick="clicked();">Execute</button>
+    </div>
+
+    <div class="app-section app-msg-log-outer">
+        <div id="message_log" class="app-msg-log">
+        </div>
+    </div>
+
+    <div class="app-section">
+        <div class="progress">
+            <div id="progress_bar" class="progress-bar progress-bar-striped bg-success"
+                    role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            </div>
+        </div>
+    </div>
+
+    <div id="popup_dialog" class="modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-secondary">
+                    <h5 id="popup_dialog_title" class="modal-title"
+                        style="color: white;">pop up dialog title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="popup_dialog_text" class="modal-body">
+                    <!-- message contents -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

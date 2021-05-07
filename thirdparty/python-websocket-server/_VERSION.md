@@ -1,0 +1,1 @@
+This code cloned from master branch at commit `fd0b190de3bef32967f64f673897a96544166593` of the [Pithikos/python-websockocket-server](https://github.com/Pithikos/python-websocket-server) project on GitHub.

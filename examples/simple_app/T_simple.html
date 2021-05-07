@@ -1,0 +1,48 @@
+<html>
+
+<head>
+    <title>{{ WIN_TITLE }}</title>
+
+<!-- This works for Chrome running in app mode (changes the top-left window icon) ... you can use png also. -->
+<link rel="icon" 
+      type="image/png" 
+      href="file://{{ APP_ICON_PATH }}">
+
+<script type="text/javascript" src="{{ PYWEBBROWSERAPP_JS_URL }}"></script> <!-- REQUIRED -->
+
+<script type="text/javascript">
+
+pwa.register_op_handler('test_one', function(op_data) {
+    alert('Got op "test_one", with op_data: ' + op_data);
+});
+
+function click_me() {
+    pwa.to_python('test_one_js_click', {'a': 'one', 'b': 'two'});
+}
+
+</script>
+
+<style>
+/* add your local css styles here */
+
+.ui-block {
+    padding: 20px;
+}
+
+</style>
+
+</head>
+
+<body onload="pwa.init('{{ SESSION_ID }}', {{ PORT }});">
+
+    <div class="ui-block">
+        <h1>{{ APP_HEADER }}</h1>
+    </div>
+
+    <div class="ui-block">
+        <button onclick="click_me()">Click Me</button>
+    </div>
+
+</body>
+
+</html>
