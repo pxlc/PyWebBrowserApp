@@ -114,7 +114,7 @@ class CustomPyWebBrowserApp(PyWebBrowserAppBase):
         res_icon_path = '%s/res/icons' % PYWEBBROWSERAPP_ROOT
 
         extra_vars = {
-            'RES_ICON_PATH': res_icon_path.replace('\\', '/'),
+            'RES_ICONS_PATH': res_icon_path.replace('\\', '/'),
             'APP_WINDOW_TITLE': app_window_title,
             'APP_HEADER': app_header,
         }
