@@ -27,8 +27,6 @@ Provided as open source under the **MIT** open source license. See `LICENSE` fil
 
 This project is a rebirth of the `ChromeAppGui` project, and has many significant improvements over its predecessor.  There is a lot more functionality provided and much of how a developer would use this project has been significantly streamlined, making it much easier to build a Desktop app with.
 
-The main impetus for starting a brand new project for this code base is the desire to rename it so that it didn't use a specific browser name in any of its naming of packages, modules, and core classes and objects.
-
 <br/>
 
 **[end]**
