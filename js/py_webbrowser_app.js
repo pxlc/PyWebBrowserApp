@@ -234,6 +234,5 @@ function PyWebBrowserApp()
 //
 var pwba = new PyWebBrowserApp();
 
-// TODO: rename pwa to pwba (for Python Web Browser App) ... PWA is something already
-
+pwba.plugin = {};
 

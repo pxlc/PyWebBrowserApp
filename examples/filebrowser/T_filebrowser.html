@@ -27,22 +27,31 @@
 <html>
 
 <head>
-    <title>{{ WIN_TITLE }}</title>
+    <title>{{ APP_WINDOW_TITLE }}</title>
 
 <link rel="icon" 
       type="image/png" 
       href="file://{{ RES_ICONS_PATH }}/PyWebBrowserApp_icon_256x256.png">
 
+<!-- CDN for elements for bootstrap-icons -->
+<!-- https://www.jsdelivr.com/package/npm/bootstrap-icons?path=font -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+
 <script type="text/javascript" src="{{ PYWEBBROWSERAPP_JS_URL }}"></script> <!-- REQUIRED -->
 
 <script type="text/javascript">
 
-pwba.register_op_handler('test_one', function(op_data) {
+pwba.register_op_handler(
+'test_one', function(op_data) {
     alert('Got op "test_one", with op_data: ' + op_data);
 });
 
 function click_me() {
     pwba.to_python('test_one_js_click', {'a': 'one', 'b': 'two'});
+}
+
+function open_plugin_popup() {
+    pwba.plugin.MyFirstPlugin.show_popup();
 }
 
 </script>
@@ -52,6 +61,12 @@ function click_me() {
 
 .ui-block {
     padding: 20px;
+}
+
+.icon-example {
+    margin: .25rem;
+    font-size: 2.5rem;
+    color: red;
 }
 
 </style>
@@ -65,7 +80,12 @@ function click_me() {
     </div>
 
     <div class="ui-block">
+        <p><i class="icon-example bi bi-alarm"></i></p>
+    </div>
+
+    <div class="ui-block">
         <button onclick="click_me()">Click Me</button>
+        <button onclick="open_plugin_popup()">Open MyFirstPlugin Popup</button>
     </div>
 
 </body>

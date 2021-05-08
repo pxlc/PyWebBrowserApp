@@ -36,6 +36,7 @@ def register_op(op_method):
 class PyWebBrowserAppBase(object):
 
     JS_FILE_URL = '%s/js/py_webbrowser_app.js' % PYWEBBROWSERAPP_ROOT
+    PYWEBBROWSERAPP_ROOT = PYWEBBROWSERAPP_ROOT
 
     def __init__(self, app_module_filepath, webbrowser_path='', width=480, height=600, template_dirpath='',
                  start_html_filename='', config_filepath='', log_to_shell=False, log_level_str='',
@@ -156,7 +157,7 @@ class PyWebBrowserAppBase(object):
 
         webbrowser_paths_by_platform = {
             'win32': [
-                # r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe',
+                r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe',
                 r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
                 r'C:\Program Files\Google\Chrome\Application\chrome.exe',
             ],
@@ -183,7 +184,7 @@ class PyWebBrowserAppBase(object):
 
         return 'T_{0}.html'.format(self.app_module_filename.replace('_app.py','').replace('.py',''))
 
-    def generate_html_file(self, template_filename):
+    def generate_html_file(self, template_filename, all_plugins_html=''):
 
         template = self.j2_template_env.get_template(template_filename)
 
@@ -197,6 +198,9 @@ class PyWebBrowserAppBase(object):
         template_vars.update(self.setup_extra_template_vars())
 
         html = template.render(template_vars)
+
+        if all_plugins_html:
+            html = html.replace('</body>', '%s\n\n</body>' % all_plugins_html)
 
         html_file_path = self.build_session_filepath('APP_START', '.html')
         with open(html_file_path, 'w') as html_fp:
