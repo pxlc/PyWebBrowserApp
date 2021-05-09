@@ -22,10 +22,6 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
     CFG_TOKEN_PATTERN = r'(\${[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+})' # NOTE: must escape $ character
     CFG_TOKEN_REGEX = re.compile(CFG_TOKEN_PATTERN)
 
-    # Folloing pattern matches so plugin sub-class definition, e.g. matches "class MyFirstPlugin(PluginBase"
-    PLUGIN_SUBCLASS_PATTERN = r'class[\ ]+[A-Z][a-z0-9]+([A-Z][a-z0-9]+)+[\ ]*[\(]\s*PluginBase'
-    PLUGIN_SUBCLASS_REGEX = re.compile(PLUGIN_SUBCLASS_PATTERN)
-
     PLUGIN_HTML_TEMPLATE = '''
 <!-- Plugin: {PLUGIN_NAME} (START) -->
 <script language="JavaScript">
