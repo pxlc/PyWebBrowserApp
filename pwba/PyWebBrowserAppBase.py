@@ -259,6 +259,13 @@ class PyWebBrowserAppBase(object):
         session_id = msg_data.get('session_id')
         op_data = msg_data.get('data', {})
 
+        #---DEBUG
+        print('')
+        print(' :: got op "%s"' % op)
+        print(' :: got op_data: %s' % op_data)
+        print('')
+        #---DEBUG
+
         if not op or not session_id or type(op_data) is not dict:
             # TODO: log warning/error
             return
@@ -268,19 +275,27 @@ class PyWebBrowserAppBase(object):
 
         # delegate operation and its data to handlers
         if op not in self.op_handler_info:
+            print('')
+            print('  >>> op not in op_handler_info')
+            print('      ... keys are: %s' % sorted(self.op_handler_info.keys()))
+            print('')
             if self.default_op_callback_fn:
                 try:
                     self.default_op_callback_fn(op_data)
                 except:
                     self.error('>>> ERROR: Exception raised running default op handler:\n\n%s' %
                                 traceback.format_exc())
-                    return
             else:
                 self.error('>>> ERROR: No op handler registered for op "%s" ... unable to process op' % op)
-                pass
             return
 
-        fn = self.op_handler_info.get(op, {}).get('cb_fn')
+        try:
+            fn = self.op_handler_info.get(op, {}).get('cb_fn')
+        except:
+            self.error('>>> ERROR: Exception raised running "%s" op handler:\n\n%s' %
+                        (op, traceback.format_exc()))
+            return
+
         if fn:
             try:
                 fn(op_data)

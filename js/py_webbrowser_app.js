@@ -207,6 +207,17 @@ function PyWebBrowserApp()
         return msg_data_str;
     };
 
+    _self.plugin_to_python = function(plugin_name, op, data) {
+        var msg_data = {
+            "op": plugin_name + "_" + op,
+            "session_id": _self.session_id,
+            "data": data
+        }
+        var msg_data_str = JSON.stringify(msg_data);
+        _self.ws.send(msg_data_str);
+        return msg_data_str;
+    };
+
     _self.task_ui_calls_by_name = {};
 
     // Task callback function signatures:
@@ -233,6 +244,4 @@ function PyWebBrowserApp()
 // Instantiate global JavaScript session instance of PyWebBrowserApp "Class"
 //
 var pwba = new PyWebBrowserApp();
-
-pwba.plugin = {};
 

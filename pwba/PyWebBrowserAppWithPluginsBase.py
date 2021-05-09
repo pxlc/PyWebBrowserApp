@@ -1,15 +1,30 @@
 
 import os
-import json
 import re
+import sys
+import json
+import importlib
 
 from .PyWebBrowserAppBase import PyWebBrowserAppBase
+
+
+def register_plugin_op(plugin_op_method):
+
+    def registered_plugin_op_method(self, op_data):
+        plugin_op_method(self, op_data)
+
+    registered_plugin_op_method._plugin_op_method = str(plugin_op_method).split()[1]
+    return registered_plugin_op_method
 
 
 class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
 
     CFG_TOKEN_PATTERN = r'(\${[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+})' # NOTE: must escape $ character
     CFG_TOKEN_REGEX = re.compile(CFG_TOKEN_PATTERN)
+
+    # Folloing pattern matches so plugin sub-class definition, e.g. matches "class MyFirstPlugin(PluginBase"
+    PLUGIN_SUBCLASS_PATTERN = r'class[\ ]+[A-Z][a-z0-9]+([A-Z][a-z0-9]+)+[\ ]*[\(]\s*PluginBase'
+    PLUGIN_SUBCLASS_REGEX = re.compile(PLUGIN_SUBCLASS_PATTERN)
 
     PLUGIN_HTML_TEMPLATE = '''
 <!-- Plugin: {PLUGIN_NAME} (START) -->
@@ -38,14 +53,27 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
                                                              app_temp_root=app_temp_root,
                                                              webbrowser_data_path=webbrowser_data_path)
 
+        self.active_plugins_root = os.path.join(self.app_temp_root, 'plugins_%s' % self.session_id)
+
         self.plugin_list = []
         self.plugin_info_by_name = {}
+        self.plugin_instance_by_name = {}
 
         self.search_path_list = []
         if 'PWBA_PLUGINS_PATH' in os.environ:
             env_search_paths = [p.strip() for p in os.environ.get('PWBA_PLUGINS_PATH', '').split(os.pathsep) if p.strip()]
             self.search_path_list += env_search_paths
         self.search_path_list.append('%s/plugins' % self.PYWEBBROWSERAPP_ROOT)
+
+    def _setup_plugin_op_handlers(self):
+
+        # set up callbacks here
+        for attr_name in dir(self):
+            attr = getattr(self, attr_name)
+            if 'bound method' in str(attr) and hasattr(attr, '_op_name'):
+                op_name = attr._op_name.split('.')[1] if '.' in attr._op_name else attr._op_name
+                print('    adding op: %s' % op_name)
+                self.add_op_handler(op_name, attr)
 
     def request_plugin(self, plugin_name):
 
@@ -60,7 +88,7 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
                 plugin_path = path_to_test
                 break
         if not plugin_path:
-            self.warning('Plugin "%s" not found in any of the Plugins Search Paths ... unable to load plugin.' % plugin_name)
+            self.error('Plugin "%s" not found in any of the Plugins Search Paths ... unable to load plugin.' % plugin_name)
             return
 
         info_pairs = [
@@ -68,11 +96,15 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
             ('css_path', '%s/pwba_plugin.css' % plugin_path),
             ('js_path', '%s/pwba_plugin.js' % plugin_path),
             ('json_path', '%s/pwba_plugin.json' % plugin_path),
+            ('py_path', '%s/pwba_plugin.py' % plugin_path),
         ]
 
         for (info_key, info_value) in info_pairs:
             if os.path.exists(info_value):
                 self.plugin_info_by_name[plugin_name][info_key] = info_value
+
+        if 'py_path' in self.plugin_info_by_name[plugin_name]:
+            self.load_python_plugin_code(plugin_name, self.plugin_info_by_name[plugin_name]['py_path'])
 
     def _convert_component_file(self, plugin_name, component_filepath, plugin_config):
 
@@ -117,14 +149,17 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
             if not p_info:
                 self.warning('Plugin "%s" does not have any content ... not adding plugin to app.' % plugin_name)
                 continue
+
             p_cfg = {}
             if 'json_path' in p_info:
                 json_path = p_info['json_path']
                 with open(json_path, 'r') as fp:
                     p_cfg = json.load(fp)
+
             p_html_str = ''
             p_css_str = ''
             p_js_str = ''
+
             if 'html_path' in p_info:
                 p_html_str = self._convert_component_file(plugin_name, p_info['html_path'], p_cfg)
             if 'css_path' in p_info:
@@ -143,4 +178,34 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
         print('')
 
         return super(PyWebBrowserAppWithPluginsBase, self).generate_html_file(template_filename, all_plugins_html)
+
+    def load_python_plugin_code(self, plugin_name, src_plugin_path):
+
+        active_plugin_dir_path = os.path.join(self.active_plugins_root, plugin_name)
+
+        os.makedirs(active_plugin_dir_path)
+        sys.path.insert(0, active_plugin_dir_path)
+
+        plugin_module_name = 'PWBA%s' % plugin_name
+        plugin_module_filepath = os.path.join(active_plugin_dir_path, '%s.py' % plugin_module_name)
+
+        with open(src_plugin_path, 'r') as fp:
+            src_text = fp.read()
+        with open(plugin_module_filepath, 'w') as fp:
+            fp.write(src_text.replace('${P}', plugin_name))
+
+        plugin_module = importlib.import_module(plugin_module_name)
+
+        plugin_instance = plugin_module.PluginSubclass()
+        plugin_instance._setup_logging_functions(self.debug, self.info, self.warning, self.error, self.critical)
+
+        self.plugin_instance_by_name[plugin_name] = plugin_instance
+
+        for attr_name in dir(plugin_instance):
+            attr = getattr(plugin_instance, attr_name)
+            if 'bound method' in str(attr) and hasattr(attr, '_plugin_op_method'):
+                op_method = attr._plugin_op_method.split('.')[1] if '.' in attr._plugin_op_method else attr._plugin_op_method
+                op_name = '%s_%s' % (plugin_name, op_method)
+                print('    adding op: %s' % op_name)
+                self.add_op_handler(op_name, attr)
 

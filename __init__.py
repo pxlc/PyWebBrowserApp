@@ -7,4 +7,7 @@ from .pwba.PyWebBrowserAppBase import PyWebBrowserAppBase
 from .pwba.PyWebBrowserAppBase import register_op
 
 from .pwba.PyWebBrowserAppWithPluginsBase import PyWebBrowserAppWithPluginsBase
+from .pwba.PyWebBrowserAppWithPluginsBase import register_plugin_op
+
+from .pwba.PluginBase import PluginBase
 

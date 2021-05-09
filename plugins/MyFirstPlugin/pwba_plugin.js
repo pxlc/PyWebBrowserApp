@@ -13,6 +13,11 @@ function ${P}() {
     {
         alert('Hello from ${P}');
     };
+
+    _self.test_callback = function()
+    {
+        pwba.plugin_to_python("${P}", "test_plugin_callback", {"message": "This is a test!"});
+    };
 }
 
-pwba.plugin.${P} = new ${P}();
+pwba.${P} = new ${P}();
