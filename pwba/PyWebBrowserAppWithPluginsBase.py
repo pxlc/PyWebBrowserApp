@@ -105,6 +105,7 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
         # load plugin config
         config = {}
         cfg_filepath = '%s/pwba_plugin_config.json' % plugin_path
+
         if os.path.exists(cfg_filepath):
             with open(cfg_filepath, 'r') as fp:
                 full_config = json.load(fp)
@@ -114,6 +115,8 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
                 del self.plugin_info_by_name[plugin_name]
                 return
             config = full_config[variation]
+            config['_variation_'] = variation
+
         self.plugin_info_by_name[plugin_name]['config'] = config
 
         if 'py_path' in self.plugin_info_by_name[plugin_name]:
@@ -154,11 +157,6 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
 
         for plugin_name in self.plugin_list:
             p_info = self.plugin_info_by_name[plugin_name]
-
-            print('')
-            print('p_info: %s' % json.dumps(p_info, indent=4, sort_keys=True))
-            print('')
-
             if not p_info:
                 self.warning('Plugin "%s" does not have any content ... not adding plugin to app.' % plugin_name)
                 continue
@@ -205,8 +203,9 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
 
         plugin_module = importlib.import_module(plugin_module_name)
 
-        plugin_instance = plugin_module.PluginSubclass()
-        plugin_instance._setup_logging_functions(self.debug, self.info, self.warning, self.error, self.critical)
+        plugin_instance = plugin_module.Plugin()
+        plugin_instance._connect_to_app(plugin_name, self.send_to_webbrowser, self.debug, self.info,
+                                        self.warning, self.error, self.critical)
 
         self.plugin_instance_by_name[plugin_name] = plugin_instance
 

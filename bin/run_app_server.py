@@ -43,23 +43,15 @@ except:
     __PKG_IS_AVAILABLE = False
 
 if not __PKG_IS_AVAILABLE:
-    try:
-        from pywebbrowserapp import PyWebBrowserAppBase
-        __PKG_IS_AVAILABLE = True
-    except:
-        __PKG_IS_AVAILABLE = False
-
-if not __PKG_IS_AVAILABLE:
-    # If both the 'PyWebBrowserApp' package or the 'pywebbrowserapp' package names are unavailable to import
-    # from then it's not in the sys.path, so we get the appropriate root path added to sys.path and PYTHONPATH
-    # for the import of the app module that will in turn import from PyWebBrowserApp ...
+    # If the 'PyWebBrowserApp' package is unavailable to import from then it's not in the sys.path, so we
+    # get the appropriate root path added to sys.path and PYTHONPATH for the import of the app module that
+    # will in turn import from PyWebBrowserApp ...
     #
     __PKG_PARENT_PATH = os.path.dirname(
                             os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).replace('//', '/')
     sys.path.insert(0, __PKG_PARENT_PATH)
     os.environ['PYTHONPATH'] = os.pathsep.join([__PKG_PARENT_PATH, os.getenv('PYTHONPATH')]) \
                                 if os.getenv('PYTHONPATH') else __PKG_PARENT_PATH
-
 
 def usage():
 

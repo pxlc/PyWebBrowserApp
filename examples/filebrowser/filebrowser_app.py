@@ -27,11 +27,7 @@ import sys
 import json
 import logging
 
-try:
-    from PyWebBrowserApp import PyWebBrowserAppWithPluginsBase, register_op
-except:
-    # if import fails try import from package name that is all lowercase
-    from pywebbrowserapp import PyWebBrowserAppWithPluginsBase, register_op
+from PyWebBrowserApp import PyWebBrowserAppWithPluginsBase, register_op
 
 PYWEBBROWSERAPP_ROOT = os.environ['PYWEBBROWSERAPP_ROOT']
 

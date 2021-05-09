@@ -259,36 +259,21 @@ class PyWebBrowserAppBase(object):
         session_id = msg_data.get('session_id')
         op_data = msg_data.get('data', {})
 
-        #---DEBUG
-        print('')
-        print(' :: got op "%s"' % op)
-        print(' :: got op_data: %s' % op_data)
-        print('')
-        #---DEBUG
-
         if not op or not session_id or type(op_data) is not dict:
-            # TODO: log warning/error
+            self.error('in PyWebBrowserApp._ws_message_from_client() ... no op or no session_id or op_data is not' \
+                        ' a dictionary.')
             return
         if session_id != self.session_id:
-            # TODO: log warning/error
+            self.error('in PyWebBrowserApp._ws_message_from_client() ... incoming session_id ("%s") is not the same' \
+                        ' as this app\'s stored session_id ("%s")' % (session_id, self.session_id))
             return
 
-        # delegate operation and its data to handlers
+        # make sure the op has been registered, send error message if not
         if op not in self.op_handler_info:
-            print('')
-            print('  >>> op not in op_handler_info')
-            print('      ... keys are: %s' % sorted(self.op_handler_info.keys()))
-            print('')
-            if self.default_op_callback_fn:
-                try:
-                    self.default_op_callback_fn(op_data)
-                except:
-                    self.error('>>> ERROR: Exception raised running default op handler:\n\n%s' %
-                                traceback.format_exc())
-            else:
-                self.error('>>> ERROR: No op handler registered for op "%s" ... unable to process op' % op)
+            self.error('>>> ERROR: No op handler registered for op "%s" ... unable to process op' % op)
             return
 
+        # delegate operation and its data to handler function
         try:
             fn = self.op_handler_info.get(op, {}).get('cb_fn')
         except:
@@ -343,10 +328,11 @@ class PyWebBrowserAppBase(object):
     def send_to_webbrowser(self, webbrowser_op, webbrowser_op_data):
 
         if not self.webbrowser_client:
-            # TODO: log warning/error
+            self.warning('No webbrowser_client to send to!')
             return
-        msg_data = json.dumps({'op': webbrowser_op, 'session_id': self.session_id, 'data': webbrowser_op_data})
-        self.ws_server.send_message(self.webbrowser_client, msg_data)
+
+        msg_data_str = json.dumps({'op': webbrowser_op, 'session_id': self.session_id, 'data': webbrowser_op_data})
+        self.ws_server.send_message(self.webbrowser_client, msg_data_str)
 
     def start_(self):
 

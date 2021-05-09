@@ -51,7 +51,6 @@ function PyWebBrowserApp()
     _self.onopen_callback_fn = null;
     _self.app_is_ready = false;
     _self.app_data_receiver_by_op = {};
-    _self.registered_plugins = [];
 
     _self.ws = null;
     _self.connection_made = false;
@@ -59,19 +58,6 @@ function PyWebBrowserApp()
     // ======================================================================================
     // [ start of API calls ]
     //
-    _self.register_plugin_js = function(plugin_function_class) {
-        let plugin_instance = new plugin_function_class();
-        let plugin_name = plugin_instance.constructor.name;
-
-        plugin_instance.plugin_to_python = function(plugin_op, plugin_op_data) {
-            pwba._plugin_to_python(plugin_name, plugin_op, plugin_op_data);
-        };
-
-        _self.registered_plugins.push(plugin_name);
-
-        _self[plugin_name] = plugin_instance;
-    };
-
     _self.init = function(session_id, port_num) {
         _self.session_id = session_id;
         _self.port_num = port_num;
@@ -119,7 +105,8 @@ function PyWebBrowserApp()
     };
 
     _self.log_msg = function(message) {
-        _self.pyprint(message);
+        let prefixed_message = "[JS] " + message
+        _self.pyprint(prefixed_message);
         console.log(message);
     };
 
@@ -152,12 +139,40 @@ function PyWebBrowserApp()
                     _self.onopen_callback_fn();
                 }
             } else {
-                _self.log_msg("WARNING: NOT CONNECT YET ... Web Browser front-end of PyWebBrowserApp got connection status of '" +
-                              op_data.status + "'!");
+                _self.log_msg("WARNING: NOT CONNECTED YET ... Web Browser front-end of PyWebBrowserApp got " +
+                              "connection status of '" + op_data.status + "'!");
             }
             return;
         }
 
+        // Check for and handle any Plugin ops
+        if (op.startsWith('Plugin|'))
+        {
+            let tokens = op.split('|');  // op e.g. "Plugin|MyFirstPlugin|test_fn"
+            let plugin_name = tokens[1];
+            let plugin_function_name = tokens[2];
+
+            if ( !(plugin_name in _self) ) {
+                _self.log_msg('ERROR: Plugin "' + plugin_name + '" was not registered (or failed to register) ... ' +
+                              'plugin op "' + op + '" cannot be delegated to a plugin function.');
+                return;
+            }
+
+            let plugin_instance = _self[plugin_name];
+            if ( !(plugin_function_name in plugin_instance) ) {
+                _self.log_msg('ERROR: Plugin "' + plugin_name + '" instance does not have the requested function "' +
+                              plugin_function_name + '" ... op cannot be delegated to be handled.');
+                return;
+            }
+
+            let plugin_fn = _self[plugin_name][plugin_function_name];
+
+            // delegate the operation to Plugin's function
+            plugin_fn(op_data);
+            return;
+        }
+
+        // Check for and handle any Task ops
         if (op.startsWith('PyWebBrowserApp_task_')) {
             let task_name = op_data.task_name;
             if (!(task_name in _self.task_ui_calls_by_name)) {
@@ -207,6 +222,18 @@ function PyWebBrowserApp()
 
     _self.register_onopen_callback = function(onopen_callback_fn) {
         _self.onopen_callback_fn = onopen_callback_fn;
+    };
+
+    _self.register_plugin_js = function(plugin_function_class) {
+        let plugin_instance = new plugin_function_class();
+        let plugin_name = plugin_instance.constructor.name;
+
+        plugin_instance.plugin_name = plugin_name
+        plugin_instance.plugin_to_python = function(plugin_op, plugin_op_data) {
+            pwba._plugin_to_python(plugin_name, plugin_op, plugin_op_data);
+        };
+
+        _self[plugin_name] = plugin_instance;
     };
 
     // message sender - sends data to Python
