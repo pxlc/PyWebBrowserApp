@@ -61,7 +61,8 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
 
         self.search_path_list = []
         if 'PWBA_PLUGINS_PATH' in os.environ:
-            env_search_paths = [p.strip() for p in os.environ.get('PWBA_PLUGINS_PATH', '').split(os.pathsep) if p.strip()]
+            env_search_paths = [p.strip() for p in os.environ.get('PWBA_PLUGINS_PATH', '').split(os.pathsep)
+                                if p.strip()]
             self.search_path_list += env_search_paths
         self.search_path_list.append('%s/plugins' % self.PYWEBBROWSERAPP_ROOT)
 
@@ -88,7 +89,8 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
                 plugin_path = path_to_test
                 break
         if not plugin_path:
-            self.error('Plugin "%s" not found in any of the Plugins Search Paths ... unable to load plugin.' % plugin_name)
+            self.error('Plugin "%s" not found in any of the Plugins Search Paths ... unable to load plugin.' %
+                       plugin_name)
             return
 
         info_pairs = [

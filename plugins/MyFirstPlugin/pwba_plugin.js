@@ -16,8 +16,8 @@ function ${P}() {
 
     _self.test_callback = function()
     {
-        pwba.plugin_to_python("${P}", "test_plugin_callback", {"message": "This is a test!"});
+        _self.plugin_to_python("test_plugin_callback", {"message": "This is a test!"});
     };
 }
 
-pwba.${P} = new ${P}();
+pwba.register_plugin_js(${P});

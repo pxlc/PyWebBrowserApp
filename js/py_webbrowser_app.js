@@ -51,6 +51,7 @@ function PyWebBrowserApp()
     _self.onopen_callback_fn = null;
     _self.app_is_ready = false;
     _self.app_data_receiver_by_op = {};
+    _self.registered_plugins = [];
 
     _self.ws = null;
     _self.connection_made = false;
@@ -58,6 +59,19 @@ function PyWebBrowserApp()
     // ======================================================================================
     // [ start of API calls ]
     //
+    _self.register_plugin_js = function(plugin_function_class) {
+        let plugin_instance = new plugin_function_class();
+        let plugin_name = plugin_instance.constructor.name;
+
+        plugin_instance.plugin_to_python = function(plugin_op, plugin_op_data) {
+            pwba._plugin_to_python(plugin_name, plugin_op, plugin_op_data);
+        };
+
+        _self.registered_plugins.push(plugin_name);
+
+        _self[plugin_name] = plugin_instance;
+    };
+
     _self.init = function(session_id, port_num) {
         _self.session_id = session_id;
         _self.port_num = port_num;
@@ -207,7 +221,7 @@ function PyWebBrowserApp()
         return msg_data_str;
     };
 
-    _self.plugin_to_python = function(plugin_name, op, data) {
+    _self._plugin_to_python = function(plugin_name, op, data) {
         var msg_data = {
             "op": plugin_name + "_" + op,
             "session_id": _self.session_id,
