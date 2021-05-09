@@ -76,7 +76,7 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
                 print('    adding op: %s' % op_name)
                 self.add_op_handler(op_name, attr)
 
-    def request_plugin(self, plugin_name):
+    def request_plugin(self, plugin_name, variation='default'):
 
         self.plugin_list.append(plugin_name)
         self.plugin_info_by_name[plugin_name] = {}
@@ -88,22 +88,37 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
             if os.path.exists(path_to_test):
                 plugin_path = path_to_test
                 break
+
         if not plugin_path:
             self.error('Plugin "%s" not found in any of the Plugins Search Paths ... unable to load plugin.' %
                        plugin_name)
+            del self.plugin_info_by_name[plugin_name]
             return
 
         info_pairs = [
             ('html_path', '%s/pwba_plugin.html' % plugin_path),
             ('css_path', '%s/pwba_plugin.css' % plugin_path),
             ('js_path', '%s/pwba_plugin.js' % plugin_path),
-            ('json_path', '%s/pwba_plugin.json' % plugin_path),
             ('py_path', '%s/pwba_plugin.py' % plugin_path),
         ]
 
         for (info_key, info_value) in info_pairs:
             if os.path.exists(info_value):
                 self.plugin_info_by_name[plugin_name][info_key] = info_value
+
+        # load plugin config
+        config = {}
+        cfg_filepath = '%s/pwba_plugin_config.json' % plugin_path
+        if os.path.exists(cfg_filepath):
+            with open(cfg_filepath, 'r') as fp:
+                full_config = json.load(fp)
+            if variation not in full_config:
+                self.error('Variation "%s" not defined in config for Plugin "%s" ... unable to load plugin.' %
+                        (varation, plugin_name))
+                del self.plugin_info_by_name[plugin_name]
+                return
+            config = full_config[variation]
+        self.plugin_info_by_name[plugin_name]['config'] = config
 
         if 'py_path' in self.plugin_info_by_name[plugin_name]:
             self.load_python_plugin_code(plugin_name, self.plugin_info_by_name[plugin_name]['py_path'])
@@ -152,11 +167,7 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
                 self.warning('Plugin "%s" does not have any content ... not adding plugin to app.' % plugin_name)
                 continue
 
-            p_cfg = {}
-            if 'json_path' in p_info:
-                json_path = p_info['json_path']
-                with open(json_path, 'r') as fp:
-                    p_cfg = json.load(fp)
+            p_cfg = self.plugin_info_by_name[plugin_name]['config']
 
             p_html_str = ''
             p_css_str = ''
@@ -175,9 +186,9 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
 
         all_plugins_html = '\n'.join(all_plugins_html_list)
 
-        print('')
-        print(all_plugins_html)
-        print('')
+        # print('')
+        # print(all_plugins_html)
+        # print('')
 
         return super(PyWebBrowserAppWithPluginsBase, self).generate_html_file(template_filename, all_plugins_html)
 
