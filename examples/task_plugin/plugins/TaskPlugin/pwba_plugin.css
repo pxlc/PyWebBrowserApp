@@ -6,10 +6,25 @@
 + ==============================================================================
 */
 
-.${P}_popup {
-    background-color: yellow;
-    color: brown;
+.${P}_message_log_style {
+    background-color: black;
     padding: 10px;
+    border-radius: 4px;
+    height: 300px;
+}
+
+.${P}_progress_bar_style {
+    background-color: grey;
+    padding: 0px;
+    border-radius: 4px;
+    height: 30px;
+}
+
+.${P}_progress_bar_inner_style {
+    background-color: green;
+    border-radius: 4px;
+    height: 100%;
+    margin: 0%;
 }
 
 

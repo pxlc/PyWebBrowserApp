@@ -52,6 +52,8 @@ function PyWebBrowserApp()
     _self.app_is_ready = false;
     _self.app_data_receiver_by_op = {};
 
+    _self.active_plugins = [];
+
     _self.ws = null;
     _self.connection_made = false;
 
@@ -91,6 +93,23 @@ function PyWebBrowserApp()
         _self.close = function() {
             _self.ws.close();
         };
+    };
+
+    _self.init_plugins = function() {
+        for (let c=0; c < _self.active_plugins.length; c++) {
+            let plugin_name = _self.active_plugins[c];
+            let plugin_instance = _self[plugin_name];
+
+            // run auto_init for standard Plugin mechanisms first
+            if ('auto_init' in plugin_instance) {
+                plugin_instance['auto_init']();
+            }
+
+            // then run init for custom Plugin initialization for the specific plugin
+            if ('init' in plugin_instance) {
+                plugin_instance['init']();
+            }
+        }
     };
 
     _self.is_app_ready = function() { return _self.app_is_ready; };
@@ -135,6 +154,12 @@ function PyWebBrowserApp()
         if (op == "connection_status") {
             if (op_data.status == "CONNECTED") {
                 _self.log_msg("Web Browser front-end of PyWebBrowserApp is READY!");
+
+                // initialize plugins here, as we have a connection established
+                if (_self.active_plugins.length) {
+                    _self.init_plugins();
+                }
+
                 if (_self.onopen_callback_fn) {
                     _self.onopen_callback_fn();
                 }
@@ -232,6 +257,8 @@ function PyWebBrowserApp()
         plugin_instance.plugin_to_python = function(plugin_op, plugin_op_data) {
             pwba._plugin_to_python(plugin_name, plugin_op, plugin_op_data);
         };
+
+        _self.active_plugins.push(plugin_name);
 
         _self[plugin_name] = plugin_instance;
     };

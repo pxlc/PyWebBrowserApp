@@ -6,8 +6,13 @@
 + ==============================================================================
 -->
 
-<div id="${P}_popup" class="${popup.class}" style="display: none;">
-    <span>Hello?</span>
-    <button onclick="pwba.${P}.test_callback()">Test MyFirstPlugin Callback</button>
-    <button onclick="pwba.${P}.roundtrip_to_python()">Test Roundtrip Callback</button>
+<div id="${P}_message_log" class="${message_log.class}" style="${message_log.style}"
+            ${P}-parent="${P}_message_log_parent">
 </div>
+
+<div id="${P}_progress_bar" class="${progress_bar.class}" style="${progress_bar.style}"
+            ${P}-parent="${P}_progress_bar_parent">
+    <div id="${P}_progress_inner_bar" class="${progress_bar_inner.class}" style="${progress_bar_inner.style}">
+    </div>
+</div>
+

@@ -12,13 +12,17 @@
         "---"
     ],
     "default": {
-        "popup": {
-            "class": "${P}_popup"
-        }
-    },
-    "bootstrap": {
-        "popup": {
-            "class": "container ${P}_popup"
+        "message_log": {
+            "class": "${P}_message_log_style",
+            "style": ""
+        },
+        "progress_bar": {
+            "class": "${P}_progress_bar_style",
+            "style": ""
+        },
+        "progress_bar_inner": {
+            "class": "${P}_progress_bar_inner_style",
+            "style": ""
         }
     }
 }

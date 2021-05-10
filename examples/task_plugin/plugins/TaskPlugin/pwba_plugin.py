@@ -46,8 +46,7 @@ class Plugin(PluginBase):
         self.ui_progress_fn = None
         self.ui_task_ended_fn = None
 
-    def setup_task(self, task_name, validation_to_start_fn, task_execution_fn, ui_message_fn,
-                    ui_progress_fn, ui_task_ended_fn):
+    def setup_task(self, task_name, validation_to_start_fn, task_execution_fn):
 
         self.task_name = task_name
 
@@ -61,21 +60,26 @@ class Plugin(PluginBase):
         self.validation_to_start_fn = validation_to_start_fn
         self.task_execution_fn = task_execution_fn
 
-        # parm signature for the ui functions are:
-        # 
-        #   ui_message_fn(message, log_level)
-        #
-        #   ui_progress_fn(percent_complete)
-        #
-        #   ui_task_ended_fn(completion_status, completion_message)
-        #
-        self.__ui_message_fn = ui_message_fn
-        self.ui_progress_fn = ui_progress_fn
-        self.ui_task_ended_fn = ui_task_ended_fn
+    # parm signature for the ui functions are:
+    # 
+    #   ui_message_fn(message, message_level)
+    #
+    #   ui_update_progress_fn(percent_complete)
+    #
+    #   ui_task_ended_fn(completion_status, completion_message)
+    #
+    def ui_message_fn(self, message, message_level):
 
-    def ui_message_fn(self, message, log_level):
+        self.plugin_to_webbrowser('ui_message', {'message': message, 'message_level': message_level})
 
-        self.__ui_message_fn('[%s] %s' % (self.task_name, message), log_level)
+    def ui_update_progress_fn(self, percent_complete):
+
+        self.plugin_to_webbrowser('ui_update_progress', {'percent_complete': percent_complete})
+
+    def ui_task_ended_fn(self, completion_status, completion_message):
+
+        self.plugin_to_webbrowser('ui_task_ended', {'completion_status': completion_status,
+                                                    'completion_message': completion_message})
 
     def check_status(self):
 
@@ -95,7 +99,7 @@ class Plugin(PluginBase):
         self.execution_thread = threading.Thread(target=self.task_execution_fn,
                                                  args=(task_data_d,
                                                        self.ui_message_fn,
-                                                       self.ui_progress_fn,
+                                                       self.ui_update_progress_fn,
                                                        self.ui_task_ended_fn,
                                                        LogLevels,
                                                        TaskStatuses))
