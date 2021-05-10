@@ -54,6 +54,9 @@ class CustomPyWebBrowserApp(PyWebBrowserAppWithPluginsBase):
         # Do any required data set-up for your app here
         self.request_plugin('TaskPlugin')
 
+        task_plugin = self.get_plugin_instance('TaskPlugin')
+        task_plugin.verify_instance()
+
     # --------------------------------------------------------------------------------------------------------
     # "setup_extra_template_vars()" is a REQUIRED override method
     #

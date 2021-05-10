@@ -72,56 +72,6 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
                 print('    adding op: %s' % op_name)
                 self.add_op_handler(op_name, attr)
 
-    def request_plugin(self, plugin_name, variation='default'):
-
-        self.plugin_list.append(plugin_name)
-        self.plugin_info_by_name[plugin_name] = {}
-
-        # first find path to plugin in search paths
-        plugin_path = ''
-        for p in self.search_path_list:
-            path_to_test = '%s/%s' % (p, plugin_name)
-            if os.path.exists(path_to_test):
-                plugin_path = path_to_test
-                break
-
-        if not plugin_path:
-            self.error('Plugin "%s" not found in any of the Plugins Search Paths ... unable to load plugin.' %
-                       plugin_name)
-            del self.plugin_info_by_name[plugin_name]
-            return
-
-        info_pairs = [
-            ('html_path', '%s/pwba_plugin.html' % plugin_path),
-            ('css_path', '%s/pwba_plugin.css' % plugin_path),
-            ('js_path', '%s/pwba_plugin.js' % plugin_path),
-            ('py_path', '%s/pwba_plugin.py' % plugin_path),
-        ]
-
-        for (info_key, info_value) in info_pairs:
-            if os.path.exists(info_value):
-                self.plugin_info_by_name[plugin_name][info_key] = info_value
-
-        # load plugin config
-        config = {}
-        cfg_filepath = '%s/pwba_plugin_config.json' % plugin_path
-
-        if os.path.exists(cfg_filepath):
-            with open(cfg_filepath, 'r') as fp:
-                full_config = json.load(fp)
-            if variation not in full_config:
-                self.error('Variation "%s" not defined in config for Plugin "%s" ... unable to load plugin.' %
-                        (varation, plugin_name))
-                del self.plugin_info_by_name[plugin_name]
-                return
-            config = full_config[variation]
-            config['_variation_'] = variation
-
-        self.plugin_info_by_name[plugin_name]['config'] = config
-
-        if 'py_path' in self.plugin_info_by_name[plugin_name]:
-            self.load_python_plugin_code(plugin_name, self.plugin_info_by_name[plugin_name]['py_path'])
-
     def _convert_component_file(self, plugin_name, component_filepath, plugin_config):
 
         converted_lines = []
@@ -212,8 +162,69 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppBase):
         for attr_name in dir(plugin_instance):
             attr = getattr(plugin_instance, attr_name)
             if 'bound method' in str(attr) and hasattr(attr, '_plugin_op_method'):
-                op_method = attr._plugin_op_method.split('.')[1] if '.' in attr._plugin_op_method else attr._plugin_op_method
+                op_method = attr._plugin_op_method.split('.')[1] if '.' in attr._plugin_op_method \
+                                                                    else attr._plugin_op_method
                 op_name = '%s_%s' % (plugin_name, op_method)
                 print('    adding op: %s' % op_name)
                 self.add_op_handler(op_name, attr)
+
+    def request_plugin(self, plugin_name, variation='default'):
+
+        self.plugin_list.append(plugin_name)
+        self.plugin_info_by_name[plugin_name] = {}
+
+        # first find path to plugin in search paths
+        plugin_path = ''
+        for p in self.search_path_list:
+            path_to_test = '%s/%s' % (p, plugin_name)
+            if os.path.exists(path_to_test):
+                plugin_path = path_to_test
+                break
+
+        if not plugin_path:
+            self.error('Plugin "%s" not found in any of the Plugins Search Paths ... unable to load plugin.' %
+                       plugin_name)
+            del self.plugin_info_by_name[plugin_name]
+            return
+
+        info_pairs = [
+            ('html_path', '%s/pwba_plugin.html' % plugin_path),
+            ('css_path', '%s/pwba_plugin.css' % plugin_path),
+            ('js_path', '%s/pwba_plugin.js' % plugin_path),
+            ('py_path', '%s/pwba_plugin.py' % plugin_path),
+        ]
+
+        for (info_key, info_value) in info_pairs:
+            if os.path.exists(info_value):
+                self.plugin_info_by_name[plugin_name][info_key] = info_value
+
+        # load plugin config
+        config = {}
+        cfg_filepath = '%s/pwba_plugin_config.json' % plugin_path
+
+        if os.path.exists(cfg_filepath):
+            with open(cfg_filepath, 'r') as fp:
+                full_config = json.load(fp)
+            if variation not in full_config:
+                self.error('Variation "%s" not defined in config for Plugin "%s" ... unable to load plugin.' %
+                        (varation, plugin_name))
+                del self.plugin_info_by_name[plugin_name]
+                return
+            config = full_config[variation]
+            config['_variation_'] = variation
+
+        self.plugin_info_by_name[plugin_name]['config'] = config
+
+        if 'py_path' in self.plugin_info_by_name[plugin_name]:
+            self.load_python_plugin_code(plugin_name, self.plugin_info_by_name[plugin_name]['py_path'])
+
+    def get_plugin_instance(self, plugin_name):
+
+        if plugin_name not in self.plugin_instance_by_name:
+            self.warning('Plugin "%s" is not in the plugin registry for this app. Unable to provide instance ' \
+                         'to this plugin.')
+            return None
+
+        return self.plugin_instance_by_name[plugin_name]
+
 

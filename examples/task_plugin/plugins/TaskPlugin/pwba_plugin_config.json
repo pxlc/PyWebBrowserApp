@@ -2,6 +2,13 @@
     "#" : [
         "This is a comment block for these configuration files.",
         "Plugin MUST, at a minimum, have a 'default' variation entry if config is to be specified",
+        "",
+        "+ ======================================================================================",
+        "|",
+        "|   TaskPlugin plugin JSON configuration",
+        "|",
+        "+ ======================================================================================",
+        "",
         "---"
     ],
     "default": {
