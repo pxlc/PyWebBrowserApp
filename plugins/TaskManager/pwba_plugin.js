@@ -12,26 +12,6 @@ function ${P}() {
     _self.registered_tasks = [];
     _self.ready = false;
 
-    _self.auto_init = function()  // put this in "base" class to always run as a standard mechanism
-    {
-        let reparent_el_list = document.querySelectorAll("[${P}-parent]");
-
-        for (let c=0; c < reparent_el_list.length; c++)
-        {
-            let reparent_el = reparent_el_list[c];
-            let target_parent_id = reparent_el.getAttribute("${P}-parent");
-            let parent_el = document.getElementById(target_parent_id);
-
-            if (parent_el) {
-                parent_el.appendChild(reparent_el.parentNode.removeChild(reparent_el));
-            } else {
-                pwba.log_msg('ERROR: Plugin "' + _self.plugin_name + '" is not able to reparent ' +
-                             'element with ID "' + reparent_el.id + '" ... no element with ID "' +
-                             target_parent_id + '" defined in your App\'s HTML.');
-            }
-        }
-    };
-
     _self.init = function()  // this is custom initialization for the specific plugin
     {
         pwba.log_msg('Custom initialization for "${P}" Plugin.');

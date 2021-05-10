@@ -259,6 +259,38 @@ function PyWebBrowserApp()
             pwba._plugin_to_python(plugin_name, plugin_op, plugin_op_data);
         };
 
+        // --------------------------------------------------------------------------------------------
+        // Mechanism to reparent any HTML elements in the pwba_plugin.html file ... how this works is
+        // --------------------------------------------------------------------------------------------
+        //
+        // (1) Any HTML elements in the pwba_plugin.html file that you want to reparent you need to add
+        //     a `${P}-parent="${P}_some_element_id"` as an attribute on that element.
+        //
+        // (2) In your app's HTML template make sure to use the value of the above new attribute
+        //     (e.g. "${P}_some_element_id"), but replacing the "${P}" part with the actual name of
+        //     the plugin (e.g. "MyFirstPlugin_some_element_id"), as the ID for the element to reparent
+        //     the HTML element in (1) above as a child node to be appended at the end.
+        //
+        plugin_instance.auto_init = function()
+        {
+            let reparent_el_list = document.querySelectorAll("[${P}-parent]");
+
+            for (let c=0; c < reparent_el_list.length; c++)
+            {
+                let reparent_el = reparent_el_list[c];
+                let target_parent_id = reparent_el.getAttribute("${P}-parent");
+                let parent_el = document.getElementById(target_parent_id);
+
+                if (parent_el) {
+                    parent_el.appendChild(reparent_el.parentNode.removeChild(reparent_el));
+                } else {
+                    pwba.log_msg('ERROR: Plugin "' + plugin_instance.plugin_name + '" is not able to reparent ' +
+                                 'element with ID "' + reparent_el.id + '" ... no element with ID "' +
+                                 target_parent_id + '" defined in your App\'s HTML.');
+                }
+            }
+        };
+
         _self.active_plugins.push(plugin_name);
 
         _self[plugin_name] = plugin_instance;
