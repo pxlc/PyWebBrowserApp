@@ -27,12 +27,6 @@ import sys
 import json
 import logging
 
-APP_ROOT = os.path.dirname(os.path.abspath(__file__)).replace('\\', '/')
-APP_PLUGINS_PATH = '%s/plugins' % APP_ROOT
-
-os.environ['PWBA_PLUGINS_PATH'] = os.pathsep.join([APP_PLUGINS_PATH, os.getenv('PWBA_PLUGINS_PATH')]) \
-                                    if os.getenv('PWBA_PLUGINS_PATH') else APP_PLUGINS_PATH
-
 from PyWebBrowserApp import PyWebBrowserAppWithPluginsBase, register_op
 
 PYWEBBROWSERAPP_ROOT = os.environ['PYWEBBROWSERAPP_ROOT']
