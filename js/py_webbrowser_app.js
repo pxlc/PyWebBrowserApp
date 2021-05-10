@@ -48,7 +48,7 @@ function PyWebBrowserApp()
 
     _self.session_id = null;
     _self.port_num = null;
-    _self.onopen_callback_fn = null;
+    _self.onappready_callback_fn = null;
     _self.app_is_ready = false;
     _self.app_data_receiver_by_op = {};
 
@@ -160,8 +160,8 @@ function PyWebBrowserApp()
                     _self.init_plugins();
                 }
 
-                if (_self.onopen_callback_fn) {
-                    _self.onopen_callback_fn();
+                if (_self.onappready_callback_fn) {
+                    _self.onappready_callback_fn();
                 }
             } else {
                 _self.log_msg("WARNING: NOT CONNECTED YET ... Web Browser front-end of PyWebBrowserApp got " +
@@ -246,8 +246,8 @@ function PyWebBrowserApp()
         _self.app_data_receiver_by_op[op] = op_handler_fn;
     };
 
-    _self.register_onopen_callback = function(onopen_callback_fn) {
-        _self.onopen_callback_fn = onopen_callback_fn;
+    _self.register_onappready_callback = function(onappready_callback_fn) {
+        _self.onappready_callback_fn = onappready_callback_fn;
     };
 
     _self.register_plugin_js = function(plugin_function_class) {

@@ -12,6 +12,10 @@ function ${P}() {
     _self.registered_tasks = [];
     _self.ready = false;
 
+    _self.override_ui_message_fn = null;
+    _self.override_ui_update_progress_fn = null;
+    _self.override_ui_task_ended_fn = null;
+
     _self.init = function()  // this is custom initialization for the specific plugin
     {
         pwba.log_msg('Custom initialization for "${P}" Plugin.');
@@ -100,6 +104,21 @@ function ${P}() {
 
     _self.enable_controls = function(task_name) { _self._set_controls_active_state(task_name, true); };
 
+    self.set_ui_message_handler = function(override_ui_message_fn) {
+        // param signature for override function is (op_data) ... op_data will have key 'task_name' always
+        _self.override_ui_message_fn = override_ui_message_fn;
+    };
+
+    self.set_ui_update_progress_handler = function(override_ui_update_progress_fn) {
+        // param signature for override function is (op_data) ... op_data will have key 'task_name' always
+        _self.override_ui_update_progress_fn = override_ui_update_progress_fn;
+    };
+
+    self.set_ui_task_ended_handler = function(override_ui_task_ended_fn) {
+        // param signature for override function is (op_data) ... op_data will have key 'task_name' always
+        _self.override_ui_task_ended_fn = override_ui_task_ended_fn;
+    };
+
     // -------------------------------------------------------------------------------
     //
     //  Below are functions called from Python, so each of these only take one
@@ -116,6 +135,11 @@ function ${P}() {
     };
 
     _self.ui_update_progress = function(op_data) {
+        if (_self.override_ui_update_progress_fn) {
+            // if caller has overridden update progress function then run override
+            _self.override_ui_update_progress_fn(op_data);
+            return;
+        }
         _self.set_progress_bar_percentage(op_data.task_name, op_data.percent_complete);
     };
 
@@ -125,6 +149,12 @@ function ${P}() {
 
     _self.ui_message = function(op_data)
     {
+        if (_self.override_ui_message_fn) {
+            // if caller has overridden message function then run override
+            _self.override_ui_message_fn(op_data);
+            return;
+        }
+
         let task_name = op_data.task_name;
 
         let msg = op_data.message;
@@ -180,6 +210,12 @@ function ${P}() {
 
     _self.ui_task_ended = function(op_data)
     {
+        if (_self.override_ui_task_ended_fn) {
+            // if caller has overridden task ended function then run override
+            _self.override_ui_task_ended_fn(op_data);
+            return;
+        }
+
         let task_name = op_data.task_name;
 
         _self.set_progress_bar_percentage(task_name, 100.0);
