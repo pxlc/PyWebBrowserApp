@@ -56,11 +56,11 @@ class CustomPyWebBrowserApp(PyWebBrowserAppWithPluginsBase):
     def setup_extra_template_vars(self):
 
         res_icon_path = '%s/res/icons' % PYWEBBROWSERAPP_ROOT
-        app_window_title = 'File Browser'
+        app_window_title = 'Plugin Example'
 
         extra_vars = {
             'APP_WINDOW_TITLE': app_window_title,
-            'APP_HEADER': '%s Example App' % app_window_title,
+            'APP_HEADER': '%s App' % app_window_title,
             'RES_ICONS_PATH': res_icon_path.replace('\\', '/'),
         }
         return extra_vars
