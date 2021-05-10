@@ -22,7 +22,7 @@
         },
         "progress_bar_inner": {
             "class": "${P}_progress_bar_inner_style",
-            "style": ""
+            "style": "width: 0.0%;"
         }
     }
 }

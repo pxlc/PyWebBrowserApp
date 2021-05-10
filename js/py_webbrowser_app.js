@@ -178,15 +178,16 @@ function PyWebBrowserApp()
             let plugin_function_name = tokens[2];
 
             if ( !(plugin_name in _self) ) {
-                _self.log_msg('ERROR: Plugin "' + plugin_name + '" was not registered (or failed to register) ... ' +
-                              'plugin op "' + op + '" cannot be delegated to a plugin function.');
+                _self.log_msg('ERROR: Plugin "' + plugin_name + '" was not registered (or failed to ' +
+                              'register) ... plugin op "' + op + '" cannot be delegated to a plugin function.');
                 return;
             }
 
             let plugin_instance = _self[plugin_name];
             if ( !(plugin_function_name in plugin_instance) ) {
-                _self.log_msg('ERROR: Plugin "' + plugin_name + '" instance does not have the requested function "' +
-                              plugin_function_name + '" ... op cannot be delegated to be handled.');
+                _self.log_msg('ERROR: Plugin "' + plugin_name + '" instance does not have the requested ' +
+                              'function "' + plugin_function_name + '" ... op cannot be delegated to ' +
+                              'be handled.');
                 return;
             }
 

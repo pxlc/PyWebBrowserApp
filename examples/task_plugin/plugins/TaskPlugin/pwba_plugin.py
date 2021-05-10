@@ -1,4 +1,7 @@
 
+import threading
+import traceback
+
 from PyWebBrowserApp import PluginBase
 from PyWebBrowserApp import register_plugin_op
 
@@ -42,17 +45,15 @@ class Plugin(PluginBase):
 
         self.status = TaskStatuses.NOT_STARTED
 
-        self.ui_message_fn = None
-        self.ui_progress_fn = None
-        self.ui_task_ended_fn = None
-
     def setup_task(self, task_name, validation_to_start_fn, task_execution_fn):
 
         self.task_name = task_name
 
         # param signatures for task functions are:
         #
-        #   validation_to_start_fn(task_data_d, ui_message_fn) -> returns bool, True if OK to start Task
+        #   validation_to_start_fn(task_data_d, ui_message_fn, LogLevels)
+        #          |
+        #          + -> returns bool, True if OK to start Task
         #
         #   task_execution_fn(task_data_d, ui_message_fn, ui_progress_fn, ui_task_ended_fn,
         #                     LogLevels, TaskStatuses)
@@ -81,6 +82,19 @@ class Plugin(PluginBase):
         self.plugin_to_webbrowser('ui_task_ended', {'completion_status': completion_status,
                                                     'completion_message': completion_message})
 
+    def _task_execution_wrapper(self, task_data_d, ui_message_fn, ui_progress_fn, ui_task_ended_fn,
+                                LogLevels, TaskStatuses):
+
+        try:
+            self.status = self.task_execution_fn(task_data_d, ui_message_fn, ui_progress_fn, ui_task_ended_fn,
+                                                 LogLevels, TaskStatuses)
+        except:
+            self.status = TaskStatuses.ERRORED
+
+            stack_trace = traceback.format_exc()
+            msg = 'Exception occurred in Task execution function - stack trace follows.\n\n%s' % stack_trace
+            self.ui_message_fn(msg, LogLevels.ERROR)
+
     def check_status(self):
 
         return self.status
@@ -88,22 +102,44 @@ class Plugin(PluginBase):
     @register_plugin_op
     def start_task(self, task_data_d):
 
-        if self.status in (self.WORKING, self.PAUSED):
-            self.ui_message_fn('Task is already running or is paused.', LogLevels.WARNING)
+        if self.status in (TaskStatuses.WORKING, TaskStatuses.PAUSED):
+            msg = 'Task is already running or is paused.'
+            print(msg)
+            print('')
+            self.ui_message_fn(msg, LogLevels.WARNING)
             return
 
-        if self.validation_to_start_fn(task_data_d, self.ui_message_fn):
-            self.ui_message_fn('Task validation for start has FAILED.', LogLevels.ERROR)
+        try:
+            is_valid_to_start = self.validation_to_start_fn(task_data_d, self.ui_message_fn, LogLevels)
+        except:
+            stack_trace = traceback.format_exc()
+            msg = 'Exception occurred in Task validation function - stack trace follows.\n\n%s' % stack_trace
+            self.ui_message_fn(msg, LogLevels.ERROR)
             return
 
-        self.execution_thread = threading.Thread(target=self.task_execution_fn,
-                                                 args=(task_data_d,
-                                                       self.ui_message_fn,
-                                                       self.ui_update_progress_fn,
-                                                       self.ui_task_ended_fn,
-                                                       LogLevels,
-                                                       TaskStatuses))
-        self.status = TaskStatuses.WORKING
-        self.execution_thread.start()
+        if not is_valid_to_start:
+            msg = 'Task validation for start has FAILED.'
+            self.ui_message_fn(msg, LogLevels.ERROR)
+            return
+
+        self.plugin_to_webbrowser('ui_disable_controls', {})
+
+        try:
+            self.execution_thread = threading.Thread(target=self._task_execution_wrapper,
+                                                     args=(task_data_d,
+                                                           self.ui_message_fn,
+                                                           self.ui_update_progress_fn,
+                                                           self.ui_task_ended_fn,
+                                                           LogLevels,
+                                                           TaskStatuses))
+            self.status = TaskStatuses.WORKING
+            self.execution_thread.start()
+        except:
+            stack_trace = traceback.format_exc()
+            msg = 'Exception occurred starting Task thread - stack trace follows.\n\n%s' % stack_trace
+            self.ui_message_fn(msg, LogLevels.ERROR)
+
+            self.plugin_to_webbrowser('ui_enable_controls', {})
+            return
 
 

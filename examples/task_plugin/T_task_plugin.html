@@ -41,17 +41,16 @@
 
 <script type="text/javascript">
 
-pwba.register_op_handler(
-'test_one', function(op_data) {
-    alert('Got op "test_one", with op_data: ' + op_data);
-});
-
 function click_me() {
-    pwba.to_python('test_one_js_click', {'a': 'one', 'b': 'two'});
-}
+    let folder_path_input = document.getElementById('folder_path_input');
+    let folder_path = folder_path_input.value.trim();
 
-function open_plugin_popup() {
-    pwba.TaskPlugin.show_popup();
+    if (! folder_path) {
+        alert('Folder Path value must be entered');
+        return;
+    }
+
+    pwba.TaskPlugin.start_task({'folder_path': folder_path});
 }
 
 </script>
@@ -84,8 +83,10 @@ function open_plugin_popup() {
     </div>
 
     <div class="ui-block">
-        <button onclick="click_me()">Click Me</button>
-        <button onclick="open_plugin_popup()">Open MyFirstPlugin Popup</button>
+        <span>Enter Folder Path to List: </span>
+        <input id="folder_path_input" class="TaskPlugin_control" type="text"></input>
+        <br/>
+        <button onclick="click_me()" class="TaskPlugin_control">Start Task</button>
     </div>
 
     <div id="TaskPlugin_message_log_parent" class="ui-block">

@@ -38,9 +38,13 @@ from PyWebBrowserApp import PyWebBrowserAppWithPluginsBase, register_op
 PYWEBBROWSERAPP_ROOT = os.environ['PYWEBBROWSERAPP_ROOT']
 
 
+from directory_listing_task import directory_listing_task_validation
+from directory_listing_task import directory_listing_task
+
+
 class CustomPyWebBrowserApp(PyWebBrowserAppWithPluginsBase):
 
-    def __init__(self, app_module_path, width=480, height=600,
+    def __init__(self, app_module_path, width=1024, height=800,
                  start_html_filename='', template_dirpath='', config_filepath='',
                  log_to_shell=False, log_level_str=''):
 
@@ -55,6 +59,8 @@ class CustomPyWebBrowserApp(PyWebBrowserAppWithPluginsBase):
         self.request_plugin('TaskPlugin')
 
         task_plugin = self.get_plugin_instance('TaskPlugin')
+        task_plugin.setup_task('my_directory_listing_task', directory_listing_task_validation,
+                               directory_listing_task)
 
     # --------------------------------------------------------------------------------------------------------
     # "setup_extra_template_vars()" is a REQUIRED override method
