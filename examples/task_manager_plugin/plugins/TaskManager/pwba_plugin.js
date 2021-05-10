@@ -1,13 +1,16 @@
 /*
 + ==============================================================================
 |
-|     TaskPlugin plugin JavaScript
+|     TaskManager plugin JavaScript
 |
 + ==============================================================================
 */
 
 function ${P}() {
     let _self = this;
+
+    _self.registered_tasks = [];
+    _self.ready = false;
 
     _self.auto_init = function()  // put this in "base" class to always run as a standard mechanism
     {
@@ -32,6 +35,11 @@ function ${P}() {
     _self.init = function()  // this is custom initialization for the specific plugin
     {
         pwba.log_msg('Custom initialization for "${P}" Plugin.');
+        _self._get_registered_tasks();
+    };
+
+    _self._get_registered_tasks = function() {
+        _self.plugin_to_python('get_registered_tasks', {});
     };
 
     _self.msg_levels = {
@@ -54,29 +62,49 @@ function ${P}() {
                           .replace(/"/g, '&quot;');
     };
 
-    _self.msg_log_scroll_to_end = function()
+    _self.msg_log_scroll_to_end = function(task_name)
     {
-        let msg_log_div = document.getElementById("${P}_message_log");
-        let children = msg_log_div.children;
+        let results = document.getElementsByClassName("${P}_" + task_name + "_log");
+        if (results.length) {
+            for (let r=0; r < results.length; r++) {
+                let msg_log_div = results[r];
+                let children = msg_log_div.children;
 
-        var total_height = 80; // add in some height to adjust for padding and such
-        for (let c=0; c < children.length; c++ ) {
-            total_height = total_height + children[c].offsetHeight;
+                var total_height = 80; // add in some height to adjust for padding and such
+                for (let c=0; c < children.length; c++ ) {
+                    total_height = total_height + children[c].offsetHeight;
+                }
+                msg_log_div.scrollTop = total_height;
+            }
         }
-        msg_log_div.scrollTop = total_height;
     };
 
-    _self.start_task = function(task_data) {
+    _self.start_task = function(task_name, task_data) {
+        if (! _self.ready) {
+            console.log('"${P}" Plugin is not in a ready state yet. Unable to start task "' + task_name + '"');
+            return;
+        }
+
+        if (_self.registered_tasks.indexOf(task_name) < 0) {
+            // task_name not registered
+            pwba.log_msg('[${P}] ERROR: Task "' + task_name + '" is not registered -- unable to start task.')
+            return;
+        }
+
+        task_data.task_name = task_name;
         _self.plugin_to_python('start_task', task_data);
     };
 
-    _self.set_progress_bar_percentage = function(percent_complete) {
-        let p_bar_div = document.getElementById("${P}_progress_bar_inner");
-        p_bar_div.style.width = "" + percent_complete + "%";
+    _self.set_progress_bar_percentage = function(task_name, percent_complete) {
+        let el_results = document.getElementsByClassName("${P}_" + task_name + "_progress_fill");
+        for (let c=0; c < el_results.length; c++) {
+            let p_bar_div = el_results[c];
+            p_bar_div.style.width = "" + percent_complete + "%";
+        }
     };
 
-    _self._set_controls_active_state = function(is_active) {
-        let control_el_list = document.getElementsByClassName("${P}_control");
+    _self._set_controls_active_state = function(task_name, is_active) {
+        let control_el_list = document.getElementsByClassName("${P}_" + task_name + "_control");
         for (let c=0; c < control_el_list.length; c++) {
             if (is_active) {
                 if ('disabled' in control_el_list[c]) {
@@ -88,9 +116,9 @@ function ${P}() {
         }
     };
 
-    _self.disable_controls = function() { _self._set_controls_active_state(false); };
+    _self.disable_controls = function(task_name) { _self._set_controls_active_state(task_name, false); };
 
-    _self.enable_controls = function() { _self._set_controls_active_state(true); };
+    _self.enable_controls = function(task_name) { _self._set_controls_active_state(task_name, true); };
 
     // -------------------------------------------------------------------------------
     //
@@ -98,15 +126,27 @@ function ${P}() {
     //  argument "op_data" that is a dictionary/object with any data to pass along
     //
     // -------------------------------------------------------------------------------
+    _self.received_registered_tasks = function(op_data) {
+        _self.registered_tasks = op_data.registered_task_list;
+        _self.ready = true;
+
+        // DEBUG
+        console.log('>>> in _self.received_registerd_tasks() function - registered tasks: ' +
+                    _self.registered_tasks);
+    };
+
     _self.ui_update_progress = function(op_data) {
-        _self.set_progress_bar_percentage(op_data.percent_complete);
+        _self.set_progress_bar_percentage(op_data.task_name, op_data.percent_complete);
     };
 
     _self.ui_disable_controls = function(op_data) {
-        _self.disable_controls();
+        _self.disable_controls(op_data.task_name);
     };
 
-    _self.ui_message = function(op_data) {
+    _self.ui_message = function(op_data)
+    {
+        let task_name = op_data.task_name;
+
         let msg = op_data.message;
         let msg_level = op_data.message_level;
 
@@ -131,7 +171,12 @@ function ${P}() {
             msg_line_prefix = "[???]: ";
         }
 
-        let msg_log_div = document.getElementById("${P}_message_log");
+        let results = document.getElementsByClassName("${P}_" + task_name + "_log");
+        if (results.length == 0) {
+            pwba.log_msg('[${P}] ERROR: No log DIV element found for Task "' + task_name + '" ... ' +
+                         'unable to log output to UI.');
+            return;
+        }
 
         let msg_lines = msg.split('\n');
 
@@ -144,19 +189,26 @@ function ${P}() {
             let html_str = '<span class="' + msg_level_class +'">' + _self.to_html_safe_text(m_line) +
                             "</span><br/>";
 
-            msg_log_div.insertAdjacentHTML('beforeend', html_str);
+            for (let r=0; r < results.length; r++) {
+                let msg_log_div = results[r];
+                msg_log_div.insertAdjacentHTML('beforeend', html_str);
+            }
         }
-        _self.msg_log_scroll_to_end();
+
+        _self.msg_log_scroll_to_end(task_name);
     };
 
-    _self.ui_task_ended = function(op_data) {
-        _self.set_progress_bar_percentage(100.0);
-        _self.msg_log_scroll_to_end();
-        _self.enable_controls();
+    _self.ui_task_ended = function(op_data)
+    {
+        let task_name = op_data.task_name;
+
+        _self.set_progress_bar_percentage(task_name, 100.0);
+        _self.msg_log_scroll_to_end(task_name);
+        _self.enable_controls(task_name);
 
         setTimeout(function() {
-            alert("Task completed with status '" + op_data.completion_status + '" and message "' +
-                  op_data.completion_message + '"')
+            alert("Task '" + task_name + "' completed with status '" + op_data.completion_status +
+                  '" and message "' + op_data.completion_message + '"')
         }, 100);
     };
 }

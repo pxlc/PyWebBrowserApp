@@ -56,10 +56,10 @@ class CustomPyWebBrowserApp(PyWebBrowserAppWithPluginsBase):
                                                     log_level_str=log_level_str)
 
         # Do any required data set-up for your app here
-        self.request_plugin('TaskPlugin')
+        self.request_plugin('TaskManager')
 
-        task_plugin = self.get_plugin_instance('TaskPlugin')
-        task_plugin.setup_task('my_directory_listing_task', directory_listing_task_validation,
+        task_plugin = self.get_plugin_instance('TaskManager')
+        task_plugin.setup_task('DirectoryListing', directory_listing_task_validation,
                                directory_listing_task)
 
     # --------------------------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ class CustomPyWebBrowserApp(PyWebBrowserAppWithPluginsBase):
     def setup_extra_template_vars(self):
 
         res_icon_path = '%s/res/icons' % PYWEBBROWSERAPP_ROOT
-        app_window_title = 'Task Plugin'
+        app_window_title = 'Task Manager Plugin'
 
         extra_vars = {
             'APP_WINDOW_TITLE': app_window_title,

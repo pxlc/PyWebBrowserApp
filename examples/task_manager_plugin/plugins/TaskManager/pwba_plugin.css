@@ -1,7 +1,7 @@
 /*
 + ==============================================================================
 |
-|     TaskPlugin plugin CSS styles
+|     TaskManager plugin CSS styles
 |
 + ==============================================================================
 */
@@ -24,27 +24,24 @@
 .${P}_message_error{ color: #EE6055; }
 .${P}_message_critical{ color: red; }
 
-.${P}_message_error {
-}
-
-.${P}_message_critical {
-}
-
 .${P}_progress_bar_style {
     background-color: #BFD1E5;
     padding: 0px;
     border-radius: 4px;
     height: 20px;
+    margin-top: 20px;
 }
 
-.${P}_progress_bar_inner_style {
+.${P}_progress_bar_fill_style {
     /* background-color: #157A6E; */ /* Pine Green */
     background-color: #499F68; /* Shamrock Green */
 
     /* border-radius: 4px 0px 0px 4px; */ /* top-left top-right bottom-right bottom-left */
     border-radius: 4px;
+    padding: 0px;
     height: 100%;
-    margin: 0%;
+    margin: 0px;
+    width: 0.0%;
 }
 
 

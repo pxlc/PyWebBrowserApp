@@ -3,7 +3,7 @@ import os
 import time
 
 
-def directory_listing_task_validation(task_data, ui_message_fn, LogLevels):
+def directory_listing_task_validation(task_name, task_data, ui_message_fn, LogLevels):
 
     print('')
     print('>>> In directory_listing_task_validation() function')
@@ -24,7 +24,7 @@ def directory_listing_task_validation(task_data, ui_message_fn, LogLevels):
     return True
 
 
-def directory_listing_task(task_data, ui_message_fn, ui_update_progress_fn, ui_task_ended_fn,
+def directory_listing_task(task_name, task_data, ui_message_fn, ui_update_progress_fn, ui_task_ended_fn,
                            LogLevels, TaskStatuses):
 
     print('')

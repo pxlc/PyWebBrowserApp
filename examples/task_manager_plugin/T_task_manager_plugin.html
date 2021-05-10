@@ -50,7 +50,7 @@ function click_me() {
         return;
     }
 
-    pwba.TaskPlugin.start_task({'folder_path': folder_path});
+    pwba.TaskManager.start_task('DirectoryListing', {'folder_path': folder_path});
 }
 
 </script>
@@ -89,10 +89,12 @@ function click_me() {
         <button onclick="click_me()" class="TaskPlugin_control">Start Task</button>
     </div>
 
-    <div id="TaskPlugin_message_log_parent" class="ui-block">
+    <div class="ui-block TaskManager_DirectoryListing_log TaskManager_message_log_style">
     </div>
 
-    <div id="TaskPlugin_progress_bar_parent" class="ui-block">
+    <div class="ui-block TaskManager_progress_bar_style">
+        <div class="ui-block TaskManager_DirectoryListing_progress_fill TaskManager_progress_bar_fill_style">
+        </div>
     </div>
 
 </body>
