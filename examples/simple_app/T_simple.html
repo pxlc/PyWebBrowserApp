@@ -27,13 +27,15 @@
 <html>
 
 <head>
-    <title>{{ WIN_TITLE }}</title>
+    <title>{{ APP_WINDOW_TITLE }}</title>
 
 <link rel="icon" 
       type="image/png" 
       href="file://{{ RES_ICONS_PATH }}/PyWebBrowserApp_icon_256x256.png">
 
-<script type="text/javascript" src="{{ PYWEBBROWSERAPP_JS_URL }}"></script> <!-- REQUIRED -->
+<link rel="stylesheet" type="text/css" href="file://{{ PWBA_CSS_PATH }}/py_webbrowser_app.css" />
+
+<script type="text/javascript" src="file://{{ PYWEBBROWSERAPP_JS_URL }}"></script> <!-- REQUIRED -->
 
 <script type="text/javascript">
 
@@ -60,12 +62,22 @@ function click_me() {
 
 <body onload="pwba.init('{{ SESSION_ID }}', {{ PORT }});">
 
-    <div class="ui-block">
-        <h1>{{ APP_HEADER }}</h1>
+    <h1>{{ APP_HEADER }}</h1>
+
+    <button onclick="click_me()">Click Me</button>
+
+    <div class="pwba-vert-spacer"></div>
+
+    <div class="pwba-outline-panel">
+        <h3>Lorem Ipsum</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nulla facilisi morbi tempus iaculis urna id. Nunc scelerisque viverra mauris in aliquam sem fringilla ut. Varius duis at consectetur lorem donec massa sapien. Tortor consequat id porta nibh venenatis cras sed. Tortor condimentum lacinia quis vel eros donec ac odio tempor. Nunc congue nisi vitae suscipit tellus mauris. Aliquet lectus proin nibh nisl condimentum id venenatis a. Commodo quis imperdiet massa tincidunt nunc pulvinar sapien et. Morbi tristique senectus et netus et malesuada fames ac turpis. Ac turpis egestas sed tempus urna et pharetra pharetra.</p>
     </div>
 
-    <div class="ui-block">
-        <button onclick="click_me()">Click Me</button>
+    <div class="pwba-vert-spacer"></div>
+
+    <div class="pwba-outline-panel">
+        <h3>Lorem Ipsum</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nulla facilisi morbi tempus iaculis urna id. Nunc scelerisque viverra mauris in aliquam sem fringilla ut. Varius duis at consectetur lorem donec massa sapien. Tortor consequat id porta nibh venenatis cras sed. Tortor condimentum lacinia quis vel eros donec ac odio tempor. Nunc congue nisi vitae suscipit tellus mauris. Aliquet lectus proin nibh nisl condimentum id venenatis a. Commodo quis imperdiet massa tincidunt nunc pulvinar sapien et. Morbi tristique senectus et netus et malesuada fames ac turpis. Ac turpis egestas sed tempus urna et pharetra pharetra.</p>
     </div>
 
 </body>

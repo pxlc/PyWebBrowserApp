@@ -59,10 +59,16 @@ class CustomPyWebBrowserApp(PyWebBrowserAppBase):
     # --------------------------------------------------------------------------------------------------------
     def setup_extra_template_vars(self):
 
+        app_title = 'Simple App'
+
         res_icon_path = '%s/res/icons' % PYWEBBROWSERAPP_ROOT
+        pwba_css_path = '%s/css' % PYWEBBROWSERAPP_ROOT
 
         extra_vars = {
+            'APP_WINDOW_TITLE': app_title,
+            'APP_HEADER': app_title,
             'RES_ICONS_PATH': res_icon_path.replace('\\', '/'),
+            'PWBA_CSS_PATH': pwba_css_path,
         }
         return extra_vars
 

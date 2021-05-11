@@ -1,0 +1,35 @@
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Manrope');
+@import url('https://fonts.googleapis.com/css?family=Crimson+Pro');
+@import url('https://fonts.googleapis.com/css?family=Inconsolata');
+
+:root {
+    font-size: 12pt;  /* same as 16px */
+}
+
+body { font-family: "Crimson Pro", serif; background-color: white; }
+
+pre { font-family: "Inconsolata", monospace; }
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Manrope", sans-serif;
+    font-weight: bold;
+}
+
+button { font-family: "Manrope", sans-serif; }
+
+.pwba-panel {
+    padding: 16px;
+}
+
+.pwba-outline-panel {
+    padding: 16px;
+    border-radius: 5px;
+    border: 0.125rem solid black;  /* 2px border width */
+}
+
+.pwba-vert-spacer {
+    width: 100%;
+    height: 1.0rem;
+}
