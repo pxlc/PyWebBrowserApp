@@ -273,18 +273,19 @@ function PyWebBrowserApp()
         //
         plugin_instance.auto_init = function()
         {
-            let reparent_el_list = document.querySelectorAll("[${P}-parent]");
+            let plugin_name = plugin_instance.plugin_name;
+            let reparent_el_list = document.querySelectorAll("[" + plugin_name + "-parent]");
 
             for (let c=0; c < reparent_el_list.length; c++)
             {
                 let reparent_el = reparent_el_list[c];
-                let target_parent_id = reparent_el.getAttribute("${P}-parent");
+                let target_parent_id = reparent_el.getAttribute(plugin_name + "-parent");
                 let parent_el = document.getElementById(target_parent_id);
 
                 if (parent_el) {
                     parent_el.appendChild(reparent_el.parentNode.removeChild(reparent_el));
                 } else {
-                    pwba.log_msg('ERROR: Plugin "' + plugin_instance.plugin_name + '" is not able to reparent ' +
+                    pwba.log_msg('ERROR: Plugin "' + plugin_name + '" is not able to reparent ' +
                                  'element with ID "' + reparent_el.id + '" ... no element with ID "' +
                                  target_parent_id + '" defined in your App\'s HTML.');
                 }

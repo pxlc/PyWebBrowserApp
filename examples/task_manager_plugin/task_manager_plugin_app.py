@@ -27,7 +27,7 @@ import sys
 import json
 import logging
 
-from PyWebBrowserApp import PyWebBrowserAppWithPluginsBase, register_op
+from PyWebBrowserApp import PyWebBrowserAppBase, register_op
 
 PYWEBBROWSERAPP_ROOT = os.environ['PYWEBBROWSERAPP_ROOT']
 
@@ -36,7 +36,7 @@ from directory_listing_task import directory_listing_task_validation
 from directory_listing_task import directory_listing_task
 
 
-class CustomPyWebBrowserApp(PyWebBrowserAppWithPluginsBase):
+class CustomPyWebBrowserApp(PyWebBrowserAppBase):
 
     def __init__(self, app_module_path, width=1024, height=800,
                  start_html_filename='', template_dirpath='', config_filepath='',

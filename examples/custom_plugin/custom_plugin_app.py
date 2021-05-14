@@ -34,12 +34,12 @@ APP_PLUGINS_PATH = '%s/plugins' % APP_ROOT
 os.environ['PWBA_PLUGINS_PATH'] = os.pathsep.join([APP_PLUGINS_PATH, os.getenv('PWBA_PLUGINS_PATH')]) \
                                     if os.getenv('PWBA_PLUGINS_PATH') else APP_PLUGINS_PATH
 
-from PyWebBrowserApp import PyWebBrowserAppWithPluginsBase, register_op
+from PyWebBrowserApp import PyWebBrowserAppBase, register_op
 
 PYWEBBROWSERAPP_ROOT = os.environ['PYWEBBROWSERAPP_ROOT']
 
 
-class CustomPyWebBrowserApp(PyWebBrowserAppWithPluginsBase):
+class CustomPyWebBrowserApp(PyWebBrowserAppBase):
 
     def __init__(self, app_module_path, width=480, height=600,
                  start_html_filename='', template_dirpath='', config_filepath='',

@@ -22,21 +22,21 @@
 # SOFTWARE.
 # -------------------------------------------------------------------------------
 
-from .PyWebBrowserAppWithPluginsBase import PyWebBrowserAppWithPluginsBase
+def register_op(op_method):
+
+    def registered_op_method(self, op_data):
+        op_method(self, op_data)
+
+    registered_op_method._op_name = str(op_method).split()[1]
+    return registered_op_method
 
 
-class PyWebBrowserAppBase(PyWebBrowserAppWithPluginsBase):
+def register_plugin_op(plugin_op_method):
 
-    def __init__(self, app_module_filepath, webbrowser_path='', width=480, height=600, template_dirpath='',
-                 start_html_filename='', config_filepath='', log_to_shell=False, log_level_str='',
-                 app_temp_root='', webbrowser_data_path=''):
+    def registered_plugin_op_method(self, op_data):
+        plugin_op_method(self, op_data)
 
-        super(PyWebBrowserAppBase, self).__init__(app_module_filepath, width=width, height=height,
-                                                  template_dirpath=template_dirpath,
-                                                  start_html_filename=start_html_filename,
-                                                  config_filepath=config_filepath,
-                                                  log_to_shell=log_to_shell,
-                                                  log_level_str=log_level_str,
-                                                  app_temp_root=app_temp_root,
-                                                  webbrowser_data_path=webbrowser_data_path)
+    registered_plugin_op_method._plugin_op_method = str(plugin_op_method).split()[1]
+    return registered_plugin_op_method
+
 
