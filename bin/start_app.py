@@ -37,7 +37,7 @@ os.environ['PYTHONPATH'] = os.pathsep.join([__PYWEBSCKTSRVR_PATH, os.getenv('PYT
 
 __PKG_IS_AVAILABLE = False
 try:
-    from PyWebBrowserApp import PyWebBrowserAppBase
+    from PyWebBrowserApp import package_test
     __PKG_IS_AVAILABLE = True
 except:
     __PKG_IS_AVAILABLE = False
@@ -53,28 +53,32 @@ if not __PKG_IS_AVAILABLE:
     os.environ['PYTHONPATH'] = os.pathsep.join([__PKG_PARENT_PATH, os.getenv('PYTHONPATH')]) \
                                 if os.getenv('PYTHONPATH') else __PKG_PARENT_PATH
 
+from PyWebBrowserApp import launcher
+
+
 def usage():
 
     script = os.path.basename(os.path.abspath(__file__))
 
     print('')
-    print('  Usage: python {} [OPTIONS] <app_module_path> [ <start_html_filename> ]'.format(script))
+    print('  Usage: python {} [OPTIONS] <app_module_path>'.format(script))
     print('')
     print('     -h | --help ... print this usage message')
     print('     -s | --shell-logging ... log messages to shell console as well')
     print('     -l <LOGLEVEL> | --log-level <LOGLEVEL> ... "DEBUG", "INFO", "WARNING", "ERROR", or "CRITICAL"')
     print('     -c <CONFIGFILE> | --config-file <CONFIGFILE> ... full path to config file to use')
-    print('     -t <TEMPLATEDIR> | --template-dir <TEMPLATEDIR> ... full path to template directory')
-    print('     -W <window_width> | --Width <window_width> ... integer value of pixels width of window to open')
-    print('     -H <window_height> | --Height <window_height> ... integer value of pixels height of window to open')
+    print('     -t <TEMPLATEFILEPATH> | --template-filepath <TEMPLATEFILEPATH>')
+    print('                                                    ... full path to HTML template to launch app with.')
+    print('     -W <window_width> | --width <window_width> ... integer value of pixels width of window to open')
+    print('     -H <window_height> | --height <window_height> ... integer value of pixels height of window to open')
     print('')
 
 
 def main(in_args):
 
     short_opt_str = 'hsl:c:t:W:H:'
-    long_opt_list = ['help', 'shell-logging', 'log-level=', 'config-file=', 'template-dir=', 'Width=', 'Height=']
-
+    long_opt_list = ['help', 'shell-logging', 'log-level=', 'config-file=', 'template-filepath',
+                     'width=', 'height=']
     try:
         opt_list, arg_list = getopt.getopt(in_args, short_opt_str, long_opt_list)
     except getopt.GetoptError as err:
@@ -86,7 +90,7 @@ def main(in_args):
     shell_logging = False
     log_level_str = 'ERROR'
     config_filepath = ''
-    template_dirpath = ''
+    template_filepath = ''
     width = 0
     height = 0
 
@@ -100,46 +104,24 @@ def main(in_args):
             log_level_str = opt_value
         elif opt_flag in ('-c', '--config-file'):
             config_filepath = opt_value
-        elif opt_flag in ('-t', '--template-dir'):
-            template_dirpath = opt_value
-        elif opt_flag in ('-W', '--Width'):
+        elif opt_flag in ('-t', '--template-filepath'):
+            template_filepath = opt_value
+        elif opt_flag in ('-W', '--width'):
             width = int(opt_value)
-        elif opt_flag in ('-H', '--Height'):
+        elif opt_flag in ('-H', '--height'):
             height = int(opt_value)
 
-    if len(arg_list) < 1:
+    if len(arg_list) != 1:
         print('')
-        print('*** ERROR: expecting at least 1 argument ...')
+        print('*** ERROR: expecting 1 argument ...')
         usage()
         sys.exit(3)
 
-    app_module_path = os.path.abspath(arg_list[0])
+    app_module_path = arg_list[0]
 
-    app_module_name = os.path.basename(app_module_path).replace('.py','')
-    app_dir_path = os.path.dirname(app_module_path).replace('\\', '/')
-
-    start_html_filename = ''
-    if len(arg_list) > 1:
-        start_html_filename = arg_list[1]
-
-    sys.path.append(app_dir_path)
-    app_module = importlib.import_module(app_module_name)
-
-    options = {
-        'start_html_filename': start_html_filename,
-        'template_dirpath': template_dirpath,
-        'config_filepath': config_filepath,
-        'log_to_shell': shell_logging,
-        'log_level_str': log_level_str,
-    }
-
-    if width:
-        options['width'] = width
-    if height:
-        options['height'] = height
-
-    app = app_module.CustomPyWebBrowserApp(app_module_path, **options)
-    app.launch()
+    launcher.launch_app(app_module_path, shell_logging=shell_logging, log_level_str=log_level_str,
+                        config_filepath=config_filepath, template_filepath=template_filepath,
+                        width=width, height=height)
 
 
 if __name__ == '__main__':
