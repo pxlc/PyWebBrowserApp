@@ -34,6 +34,6 @@ from .pwba.PluginBase import PluginBase
 
 from .pwba import launcher
 
-import package_test
+from . import package_test
 
 

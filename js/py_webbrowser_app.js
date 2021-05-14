@@ -246,6 +246,8 @@ function PyWebBrowserApp()
         _self.app_data_receiver_by_op[op] = op_handler_fn;
     };
 
+    // TRANSITION: previously named "register_onopen_callback()"
+    //
     _self.register_onappready_callback = function(onappready_callback_fn) {
         _self.onappready_callback_fn = onappready_callback_fn;
     };
