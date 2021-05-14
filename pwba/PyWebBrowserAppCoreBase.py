@@ -41,7 +41,6 @@ from .op_registry import register_op
 from .get_js import get_js_file_url
 from .config import load_config_file
 from .util import get_next_port_num
-from .TaskThread import TaskThread
 
 PYWEBBROWSERAPP_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/')
 print('')
@@ -150,8 +149,6 @@ class PyWebBrowserAppCoreBase(object):
         self.webbrowser_process = None
 
         self.start_html_fname = start_html_filename if start_html_filename else self.auto_template_filename()
-
-        self.task_by_name_d = {}
 
         self._setup_op_handlers()
 
@@ -410,43 +407,4 @@ class PyWebBrowserAppCoreBase(object):
 
         log_fn_by_level[log_level](message)
 
-    def task_to_ui_message(self, task_name, message_text, message_level):
-
-        op_data = {'task_name': task_name, 'msg_lines': message_text.splitlines(), 'msg_level': message_level}
-        self.send_to_webbrowser('PyWebBrowserApp_task_to_ui_message', op_data)
-
-    def task_to_ui_update_progress(self, task_name, percent_complete):
-
-        self.send_to_webbrowser('PyWebBrowserApp_task_to_ui_update_progress',
-                                {'task_name': task_name, 'percent_complete': percent_complete})
-
-    def task_to_ui_execution_finished(self, task_name, status, message):
-
-        self.send_to_webbrowser('PyWebBrowserApp_task_to_ui_execution_finished',
-                                {'task_name': task_name, 'status': status, 'message': message})
-
-    def add_task(self, task_name, execution_fn):
-
-        #  task_execution_fn(data, message_cb, update_progress_cb, task_ended_cb)
-        self.task_by_name_d[task_name] = TaskThread(task_name, execution_fn,
-                                                    self.task_to_ui_message,
-                                                    self.task_to_ui_update_progress,
-                                                    self.task_to_ui_execution_finished)
-
-    def start_task(self, task_name, input_data):
-
-        if task_name not in self.task_by_name_d:
-            self.error('Task name "%s" is not a registered task. Unable to run task.' % task_name)
-            return
-
-        self.task_by_name_d[task_name].start_task(input_data)
-        self.info('Task with name "%s" has STARTED.' % task_name)
-
-    def is_task_running(self, task_name):
-
-        if task_name not in self.task_by_name_d:
-            self.error('Task name "%s" is not a registered task. Unable to run task.' % task_name)
-            return False
-
-        return self.task_by_name_d[task_name].is_task_running()
 
