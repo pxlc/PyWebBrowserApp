@@ -59,14 +59,15 @@ class CustomPyWebBrowserApp(PyWebBrowserAppBase):
 
     def __init__(self, app_module_path, width=600, height=240,
                  start_html_filename='', template_dirpath='', config_filepath='',
-                 log_to_shell=False, log_level_str=''):
+                 log_to_shell=False, log_level_str='', webbrowser_path=''):
 
         super(CustomPyWebBrowserApp, self).__init__(app_module_path, width=width, height=height,
                                                     template_dirpath=template_dirpath,
                                                     start_html_filename=start_html_filename,
                                                     config_filepath=config_filepath,
                                                     log_to_shell=log_to_shell,
-                                                    log_level_str=log_level_str)
+                                                    log_level_str=log_level_str,
+                                                    webbrowser_path=webbrowser_path)
 
         # Do any required data set-up for your app here
         self.launcher_config_d = {}
