@@ -62,6 +62,7 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppCoreBase):
                                                              log_to_shell=log_to_shell,
                                                              log_level_str=log_level_str,
                                                              app_temp_root=app_temp_root,
+                                                             webbrowser_path=webbrowser_path,
                                                              webbrowser_data_path=webbrowser_data_path)
 
         self.active_plugins_root = os.path.join(self.app_temp_root, 'plugins_%s' % self.session_id)

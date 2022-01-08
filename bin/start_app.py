@@ -66,6 +66,7 @@ def usage():
     print('     -h | --help ... print this usage message')
     print('     -s | --shell-logging ... log messages to shell console as well')
     print('     -l <LOGLEVEL> | --log-level <LOGLEVEL> ... "DEBUG", "INFO", "WARNING", "ERROR", or "CRITICAL"')
+    print('     -b <WEBBROWSERPATH> | --browser-path <WEBBROWSERPATH> ... full path to webbrowser executable')
     print('     -c <CONFIGFILE> | --config-file <CONFIGFILE> ... full path to config file to use')
     print('     -t <TEMPLATEFILEPATH> | --template-filepath <TEMPLATEFILEPATH>')
     print('                                                    ... full path to HTML template to launch app with.')
@@ -76,9 +77,9 @@ def usage():
 
 def main(in_args):
 
-    short_opt_str = 'hsl:c:t:W:H:'
-    long_opt_list = ['help', 'shell-logging', 'log-level=', 'config-file=', 'template-filepath',
-                     'width=', 'height=']
+    short_opt_str = 'hsl:b:c:t:W:H:'
+    long_opt_list = ['help', 'shell-logging', 'log-level=', 'browser-path=', 'config-file=',
+                     'template-filepath', 'width=', 'height=']
     try:
         opt_list, arg_list = getopt.getopt(in_args, short_opt_str, long_opt_list)
     except getopt.GetoptError as err:
@@ -89,6 +90,7 @@ def main(in_args):
 
     shell_logging = False
     log_level_str = 'ERROR'
+    webbrowser_path = ''
     config_filepath = ''
     template_filepath = ''
     width = 0
@@ -102,6 +104,8 @@ def main(in_args):
             shell_logging = True
         elif opt_flag in ('-l', '--log-level'):
             log_level_str = opt_value
+        elif opt_flag in ('-b', '--browser-path'):
+            webbrowser_path = opt_value
         elif opt_flag in ('-c', '--config-file'):
             config_filepath = opt_value
         elif opt_flag in ('-t', '--template-filepath'):
@@ -121,7 +125,7 @@ def main(in_args):
 
     launcher.launch_app(app_module_path, shell_logging=shell_logging, log_level_str=log_level_str,
                         config_filepath=config_filepath, template_filepath=template_filepath,
-                        width=width, height=height)
+                        width=width, height=height, webbrowser_path=webbrowser_path)
 
 
 if __name__ == '__main__':

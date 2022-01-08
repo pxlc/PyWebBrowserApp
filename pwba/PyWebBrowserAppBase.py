@@ -38,5 +38,6 @@ class PyWebBrowserAppBase(PyWebBrowserAppWithPluginsBase):
                                                   log_to_shell=log_to_shell,
                                                   log_level_str=log_level_str,
                                                   app_temp_root=app_temp_root,
+                                                  webbrowser_path=webbrowser_path,
                                                   webbrowser_data_path=webbrowser_data_path)
 
