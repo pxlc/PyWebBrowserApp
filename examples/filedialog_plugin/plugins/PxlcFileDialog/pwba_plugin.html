@@ -1,0 +1,65 @@
+
+<!-- START File Dialog UI -->
+<div id="id_${P}_outer" class="${P}_outer" style="display: none;">
+
+    <div class="${P}_titlebar">
+        <span>File Browser</span>
+        <span class="${P}_close_btn" onclick="pwba.${P}.hide();">&times;</span>
+    </div>
+
+    <div class="${P}_body">
+        <div>
+            <input class="${P}_pathEdit" type="text" id="id_pxlcFileDialog_pathEdit" />
+        </div>
+
+        <div class="${P}_navArea"><table class="pxlcFileDialog_navArea_table">
+
+            <tr> <!-- Navigation columns -->
+
+            <td class="${P}_navArea_colNarrow" id="id_${P}_navArea_quickLinksListing">
+                <div class="${P}_quick_link">My Documents</div>
+                <div class="${P}_quick_link">Desktop</div>
+                <div class="${P}_quick_link">C: drive</div>
+                <div class="${P}_quick_link">P: drive</div>
+            </td>
+
+            <td class="${P}_navArea_col">
+                <div class="${P}_navArea_col_titlebar">
+                    Folders
+                </div>
+
+                <div class="${P}_navArea_foldersListing" id="id_${P}_navArea_foldersListing">
+                </div>
+            </td>
+
+            <td class="${P}_navArea_col">
+                <div class="${P}_navArea_col_titlebar">
+                    Files
+                </div>
+
+                <div class="${P}_navArea_filesListing" id="id_${P}_navArea_filesListing">
+                </div>
+            </td>
+
+            </tr>
+
+        </table></div>
+
+    </div>
+
+    <div class="${P}_filename_div">
+        <span class="${P}_filename_label">File name:</span>
+        <input id="id_${P}_filename" class="pxlcFileDialog_filename" type="text" />
+    </div>
+
+    <div class="${P}_open_btn">
+        Open
+    </div>
+
+    <div class="${P}_cancel_btn">
+        Cancel
+    </div>
+
+</div>
+</div>
+<!-- END File Dialog UI -->

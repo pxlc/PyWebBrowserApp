@@ -1,0 +1,180 @@
+
+.${P}_outer {
+    width: 800px;
+    max-width: 800px;
+    height: 608px;
+
+    background-color: #A9A9A9; /* DarkGrey */
+    border-radius: 6pt;
+
+    padding: 0px;
+
+    position: absolute;
+    top: 30px;
+    left: 30px;
+}
+
+.${P}_titlebar {
+    font-family: Arial,Helvetica,sans-serif;
+    color: white;
+    background-color: rgb(90,90,90);
+    border-radius: 6pt 6pt 0pt 0pt;
+    padding: 10px;
+    padding-left: 20px;
+}
+
+.${P}_close_btn {
+    margin-top: -5px;
+    margin-right: 10px;
+    float: right;
+    cursor: pointer;
+    font-size: 18pt;
+}
+
+.${P}_pathEdit {
+    margin-top: 10px;
+    margin-left: 14px;
+    width: 96%;
+
+    padding: 4px;
+    border: none;
+    background-color: #DCDCDC; /* Gainsboro */
+    font-family: Courier New, monospace;
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+.${P}_navArea {
+    padding-left: 15px;
+    padding-top: 6px;
+    padding-right: 15px;
+}
+
+.${P}_navArea_table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    border: none;
+}
+
+.${P}_navArea_colNarrow {
+    width: 20%;
+    height: 100%;
+    padding: 5px;
+    padding-right: 15px;
+    /* border: solid 1px grey; */
+    vertical-align: top;
+}
+
+.${P}_navArea_col {
+    width: 40%;
+    height: 100%;
+    padding: 5px;
+    /* border: solid 1px grey; */
+    vertical-align: top;
+}
+
+.${P}_navArea_col_titlebar {
+    border-radius: 4pt 4pt 0pt 0pt;
+    border: none;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 11pt;
+    color: white;
+    background-color: rgb(90,90,90);
+    padding: 4px;
+    padding-left: 8px;
+}
+
+.${P}_navArea_filesListing {
+    background-color: #D3D3D3; /* LightGrey */
+    height: 400px;
+    overflow: scroll;
+}
+
+.${P}_navArea_foldersListing {
+    background-color: #D3D3D3; /* LightGrey */
+    height: 400px;
+    overflow: scroll;
+}
+
+.${P}_open_btn {
+    background-color: rgb(90,90,90);
+    color: white;
+    font-family: Arial,Helvetica,sans-serif;
+    padding: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 4pt;
+
+    width: 80px;
+    text-align: center;
+
+    position: absolute;
+    top: 566px;
+    left: 525px;
+
+    cursor: pointer;
+}
+
+.${P}_cancel_btn {
+    background-color: rgb(90,90,90);
+    color: white;
+    font-family: Arial,Helvetica,sans-serif;
+    padding: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 4pt;
+
+    width: 80px;
+    text-align: center;
+
+    position: absolute;
+    top: 566px;
+    left: 645px;
+
+    cursor: pointer;
+}
+
+.${P}_filename_div {
+    width: 608px;
+    position: absolute;
+    top: 528px;
+    left: 180px;
+}
+
+.${P}_filename_label {
+    color: rgb(90,90,90);
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+.${P}_filename {
+    width: 518px;
+    padding: 4px;
+    border: none;
+    background-color: #DCDCDC; /* Gainsboro */
+    font-family: Courier New, monospace;
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+.${P}_quick_link {
+    width: 100%;
+    border-radius: 4pt;
+
+    margin-bottom: 8px;
+
+    padding: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+
+    background-color: rgb(90,90,90);
+    color: white;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 11pt;
+
+    text-align: center;
+
+    cursor: pointer;
+}
