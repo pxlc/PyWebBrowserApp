@@ -41,7 +41,7 @@ PYWEBBROWSERAPP_ROOT = os.environ['PYWEBBROWSERAPP_ROOT']
 
 class CustomPyWebBrowserApp(PyWebBrowserAppBase):
 
-    def __init__(self, app_module_path, width=480, height=600,
+    def __init__(self, app_module_path, width=1024, height=800,
                  start_html_filename='', template_dirpath='', config_filepath='',
                  log_to_shell=False, log_level_str='', webbrowser_path=''):
 
@@ -54,7 +54,7 @@ class CustomPyWebBrowserApp(PyWebBrowserAppBase):
                                                     webbrowser_path=webbrowser_path)
 
         # Do any required data set-up for your app here
-        self.request_plugin('PxlcFileDialog')
+        self.request_plugin('PxlcFileBrowser')
 
     # --------------------------------------------------------------------------------------------------------
     # "setup_extra_template_vars()" is a REQUIRED override method
@@ -64,7 +64,7 @@ class CustomPyWebBrowserApp(PyWebBrowserAppBase):
     def setup_extra_template_vars(self):
 
         res_icon_path = '%s/res/icons' % PYWEBBROWSERAPP_ROOT
-        app_window_title = 'Custom Plugin Example'
+        app_window_title = 'File Browser Plugin Example'
 
         extra_vars = {
             'APP_WINDOW_TITLE': app_window_title,
