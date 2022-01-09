@@ -37,11 +37,26 @@
     width: 96%;
 
     padding: 4px;
-    border: none;
+    border: 1px solid #DCDCDC;
     background-color: #DCDCDC; /* Gainsboro */
     font-family: Courier New, monospace;
     font-size: 12pt;
     font-weight: bold;
+}
+
+.${P}_pathEdit:focus {
+    background-color: white;
+    border: 1px solid white;
+}
+
+.${P}_pathEdit.${P}_error {
+    border: 1px solid red;
+    color: red;
+}
+
+.${P}_pathEdit.${P}_success {
+    border: 1px solid green;
+    color: green;
 }
 
 .${P}_navArea {
@@ -149,7 +164,7 @@
     font-weight: bold;
 }
 
-.${P}_filename {
+.${P}_filenameEdit {
     width: 518px;
     padding: 4px;
     border: none;
