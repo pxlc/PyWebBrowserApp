@@ -18,19 +18,24 @@ class Plugin(PluginBase):
         callback_fn_name = op_data.get('callback_fn_name', '')
         dirpath_to_validate = op_data.get('dirpath_to_validate', '')
         is_path_valid = False
+        dir_items_info = None
 
         if os.path.isdir(dirpath_to_validate):
             is_path_valid = True
-        else:
-            # Sym-links manifest as files in Python so see if we can listdir() on it
-            try:
-                os.listdir(dirpath_to_validate)
-                is_path_valid = True
-            except:
-                pass # leave as not valid
+            dir_items_info = {'files': [], 'folders': []}
+
+            items = sorted(os.listdir(dirpath_to_validate))
+            for i in items:
+                i_path = '%s/%s' % (dirpath_to_validate, i)
+                if os.path.isdir(i_path):
+                    dir_items_info['folders'].append(i)
+                else:
+                    # otherwise assume it is a file
+                    dir_items_info['files'].append(i)
 
         self.plugin_to_webbrowser('response_to_validate_dirpath',
-                                  {'is_path_valid': is_path_valid, 'callback_fn_name': callback_fn_name})
+                                  {'is_path_valid': is_path_valid, 'callback_fn_name': callback_fn_name,
+                                        'dir_items_info': dir_items_info})
 
     @register_plugin_op
     def test_plugin_callback(self, op_data):

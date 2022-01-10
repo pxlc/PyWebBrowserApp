@@ -36,9 +36,10 @@ function ${P}() {
     {
         let is_path_valid = op_data.is_path_valid;
         let validation_callback_fn_name = op_data.callback_fn_name;
+        let dir_items_info = op_data.dir_items_info;
 
         if (validation_callback_fn_name) {
-            let exec_str = validation_callback_fn_name + '(' + is_path_valid + ');';
+            let exec_str = validation_callback_fn_name + '(is_path_valid, dir_items_info);';
             eval(exec_str);
         }
     };
@@ -55,12 +56,13 @@ function ${P}() {
         path_text_input_el.value = new_path_value;
     };
 
-    _self.apply_path_input_validation = function(is_path_valid)
+    _self.apply_path_input_validation = function(is_path_valid, dir_items_info)
     {
         let path_text_input_el = document.getElementById("id_${P}_pathEdit");
         path_text_input_el.classList.remove("${P}_error", "${P}_success");
         if (is_path_valid) {
             path_text_input_el.classList.add("${P}_success");
+            console.log(dir_items_info)
         } else {
             path_text_input_el.classList.add("${P}_error");
         }

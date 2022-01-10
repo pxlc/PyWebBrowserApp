@@ -91,10 +91,16 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppCoreBase):
     def _convert_component_file(self, plugin_name, component_filepath, plugin_config):
 
         converted_lines = []
+        plugin_root_dirpath = os.path.dirname(component_filepath).replace('\\', '/')
+
         with open(component_filepath, 'r') as fp:
             for line in fp:
                 # first change all ${P} occurrences
                 line = line.replace('${P}', plugin_name)
+
+                # second change all ${P_ROOT} occurrences
+                line = line.replace('${P_ROOT}', plugin_root_dirpath)
+
                 # then replace tokens based on config
                 cfg_tokens = self.CFG_TOKEN_REGEX.findall(line)
                 for ctok in cfg_tokens:

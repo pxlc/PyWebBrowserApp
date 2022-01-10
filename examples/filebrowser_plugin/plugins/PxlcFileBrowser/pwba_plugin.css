@@ -39,7 +39,7 @@
     padding: 4px;
     border: 1px solid #DCDCDC;
     background-color: #DCDCDC; /* Gainsboro */
-    font-family: Courier New, monospace;
+    font-family: 'Courier New', Courier, monospace;
     font-size: 12pt;
     font-weight: bold;
 }
@@ -174,6 +174,22 @@
     font-weight: bold;
 }
 
+.${P}_filenameEdit:focus {
+    background-color: white;
+    border: 1px solid white;
+}
+
+.${P}_filenameEdit.${P}_error {
+    border: 1px solid red;
+    color: red;
+}
+
+.${P}_filenameEdit.${P}_success {
+    border: 1px solid green;
+    color: green;
+}
+
+
 .${P}_quick_link {
     width: 100%;
     border-radius: 4pt;
@@ -192,4 +208,36 @@
     text-align: center;
 
     cursor: pointer;
+}
+
+ul.${P}_file_listing {
+    list-style-image: url('file://${P_ROOT}/res/remix_icon/file-line_14px.png');
+    padding-left: 25px;
+    margin-top: 6px;
+}
+
+ul.${P}_folder_listing {
+    list-style-image: url('file://${P_ROOT}/res/remix_icon/folder-4-line_14px.png');
+    padding-left: 25px;
+    margin-top: 6px;
+}
+
+li.${P}_item {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11pt;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+li.${P}_item:hover {
+    background-color: aqua;
+}
+
+.${P}_no_text_select {
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;   
 }
