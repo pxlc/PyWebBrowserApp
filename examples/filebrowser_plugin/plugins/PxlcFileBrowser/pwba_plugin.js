@@ -34,12 +34,13 @@ function ${P}() {
     
     _self.response_to_validate_dirpath = function(op_data)
     {
+        let dirpath_value = op_data.dirpath_value;
         let is_path_valid = op_data.is_path_valid;
         let validation_callback_fn_name = op_data.callback_fn_name;
         let dir_items_info = op_data.dir_items_info;
 
         if (validation_callback_fn_name) {
-            let exec_str = validation_callback_fn_name + '(is_path_valid, dir_items_info);';
+            let exec_str = validation_callback_fn_name + '(dirpath_value, is_path_valid, dir_items_info);';
             eval(exec_str);
         }
     };
@@ -56,16 +57,61 @@ function ${P}() {
         path_text_input_el.value = new_path_value;
     };
 
-    _self.apply_path_input_validation = function(is_path_valid, dir_items_info)
+    _self.apply_path_input_validation = function(dirpath_value, is_path_valid, dir_items_info)
     {
         let path_text_input_el = document.getElementById("id_${P}_pathEdit");
+        path_text_input_el.value = dirpath_value;
+
         path_text_input_el.classList.remove("${P}_error", "${P}_success");
-        if (is_path_valid) {
+
+        if (is_path_valid && dir_items_info) {
             path_text_input_el.classList.add("${P}_success");
             console.log(dir_items_info)
+            _self.fill_folders_listing(dir_items_info.folders);
+            _self.fill_files_listing(dir_items_info.files);
         } else {
             path_text_input_el.classList.add("${P}_error");
+            _self.clear_folders_listing();
+            _self.clear_files_listing();
         }
+    };
+
+    _self.clear_folders_listing = function() {
+        let folder_listing_ul_el = document.getElementById('id_${P}_navArea_foldersListing');
+        folder_listing_ul_el.innerHTML = '';
+    };
+
+    _self.fill_folders_listing = function(folder_list)
+    {
+        let folder_listing_ul_el = document.getElementById('id_${P}_navArea_foldersListing');
+
+        let html_str_list = ['<ul class="${P}_folder_listing">', '<li class="${P}_item ${P}_no_text_select">..</li>'];
+        for (var c=0; c < folder_list.length; c++) {
+            let foldername = folder_list[c];
+            html_str_list.push('<li class="${P}_item ${P}_no_text_select">' + foldername + '</li>');
+        }
+        html_str_list.push('</ul>');
+
+        folder_listing_ul_el.innerHTML = html_str_list.join('\n');
+    };
+
+    _self.clear_files_listing = function() {
+        let files_listing_ul_el = document.getElementById('id_${P}_navArea_filesListing');
+        files_listing_ul_el.innerHTML = '';
+    };
+
+    _self.fill_files_listing = function(file_list)
+    {
+        let files_listing_ul_el = document.getElementById('id_${P}_navArea_filesListing');
+
+        let html_str_list = ['<ul class="${P}_file_listing">'];
+        for (var c=0; c < file_list.length; c++) {
+            let filename = file_list[c];
+            html_str_list.push('<li class="${P}_item ${P}_no_text_select">' + filename + '</li>');
+        }
+        html_str_list.push('</ul>');
+
+        files_listing_ul_el.innerHTML = html_str_list.join('\n');
     };
 }
 

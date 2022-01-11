@@ -16,9 +16,16 @@ class Plugin(PluginBase):
     def validate_dirpath(self, op_data):
 
         callback_fn_name = op_data.get('callback_fn_name', '')
-        dirpath_to_validate = op_data.get('dirpath_to_validate', '')
+        dirpath_to_validate = op_data.get('dirpath_to_validate', '').replace('\\', '/')
+
+        if not dirpath_to_validate:
+            self.plugin_to_webbrowser('response_to_validate_dirpath',
+                                    {'is_path_valid': False, 'callback_fn_name': callback_fn_name,
+                                        'dirpath_value': '', 'dir_items_info': dir_items_info})
         is_path_valid = False
         dir_items_info = None
+
+        dirpath_to_validate = os.path.expandvars(dirpath_to_validate).replace('\\', '/')
 
         if os.path.isdir(dirpath_to_validate):
             is_path_valid = True
@@ -35,7 +42,7 @@ class Plugin(PluginBase):
 
         self.plugin_to_webbrowser('response_to_validate_dirpath',
                                   {'is_path_valid': is_path_valid, 'callback_fn_name': callback_fn_name,
-                                        'dir_items_info': dir_items_info})
+                                    'dirpath_value': dirpath_to_validate, 'dir_items_info': dir_items_info})
 
     @register_plugin_op
     def test_plugin_callback(self, op_data):
