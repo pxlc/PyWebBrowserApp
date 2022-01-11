@@ -96,8 +96,14 @@ input:focus{
 }
 
 .${P}_navArea_col {
-    width: 40%;
-    height: 100%;
+    width:     302px;
+    max-width: 302px;
+    min-width: 302px;
+
+    height:     500px;
+    max-height: 500px;
+    min-height: 500px;
+
     padding: 5px;
     /* border: solid 1px grey; */
     vertical-align: top;
@@ -116,16 +122,30 @@ input:focus{
 
 .${P}_navArea_filesListing {
     background-color: #D3D3D3; /* LightGrey */
-    height: 400px;
-    overflow: hidden;
-    /* overflow: scroll; */
+
+    width:     302px;
+    min-width: 302px;
+    max-width: 302px;
+
+    height:     400px;
+    min-height: 400px;
+    max-height: 400px;
+
+    overflow-y: scroll;
 }
 
 .${P}_navArea_foldersListing {
     background-color: #D3D3D3; /* LightGrey */
-    height: 400px;
-    overflow: hidden;
-    /* overflow: scroll; */
+
+    width:     302px;
+    min-width: 302px;
+    max-width: 302px;
+
+    height:     400px;
+    min-height: 400px;
+    max-height: 400px;
+
+    overflow-y: scroll;
 }
 
 .${P}_open_btn {

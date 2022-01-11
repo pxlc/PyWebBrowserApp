@@ -83,16 +83,23 @@ function ${P}() {
 
     _self.fill_folders_listing = function(folder_list)
     {
-        let folder_listing_ul_el = document.getElementById('id_${P}_navArea_foldersListing');
+        let folder_listing_div_el = document.getElementById('id_${P}_navArea_foldersListing');
 
         let html_str_list = ['<ul class="${P}_folder_listing">', '<li class="${P}_item ${P}_no_text_select">..</li>'];
         for (var c=0; c < folder_list.length; c++) {
-            let foldername = folder_list[c];
-            html_str_list.push('<li class="${P}_item ${P}_no_text_select">' + foldername + '</li>');
+            let safe_foldername = pwba.sanitize_string_for_html(folder_list[c]);
+            html_str_list.push('<li class="${P}_item ${P}_no_text_select" title="' + safe_foldername + '"' +
+                                'onclick="pwba.${P}.select_folder_item(this);">' + safe_foldername + '</li>');
         }
         html_str_list.push('</ul>');
 
-        folder_listing_ul_el.innerHTML = html_str_list.join('\n');
+        folder_listing_div_el.innerHTML = html_str_list.join('\n');
+
+        let li_list = folder_listing_div_el.querySelectorAll('li');
+        for (var c=1; c < li_list.length; c++) {
+            let li_el = li_list[c];
+            li_el._original_foldername = folder_list[c-1];
+        }
     };
 
     _self.clear_files_listing = function() {
@@ -102,16 +109,33 @@ function ${P}() {
 
     _self.fill_files_listing = function(file_list)
     {
-        let files_listing_ul_el = document.getElementById('id_${P}_navArea_filesListing');
+        let files_listing_div_el = document.getElementById('id_${P}_navArea_filesListing');
 
         let html_str_list = ['<ul class="${P}_file_listing">'];
         for (var c=0; c < file_list.length; c++) {
-            let filename = file_list[c];
-            html_str_list.push('<li class="${P}_item ${P}_no_text_select">' + filename + '</li>');
+            let safe_filename = pwba.sanitize_string_for_html(file_list[c]);
+            html_str_list.push('<li class="${P}_item ${P}_no_text_select" title="' + safe_filename + '"' +
+                                'onclick="pwba.${P}.select_file_item(this);">' + safe_filename + '</li>');
         }
         html_str_list.push('</ul>');
 
-        files_listing_ul_el.innerHTML = html_str_list.join('\n');
+        files_listing_div_el.innerHTML = html_str_list.join('\n');
+
+        let li_list = files_listing_div_el.querySelectorAll('li');
+        for (var c=0; c < li_list.length; c++) {
+            let li_el = li_list[c];
+            li_el._original_filename = file_list[c];
+        }
+    };
+
+    _self.select_folder_item = function(li_el)
+    {
+        alert('Folder name: ' + li_el._original_foldername);
+    };
+
+    _self.select_file_item = function(li_el)
+    {
+        alert('File name: ' + li_el._original_filename);
     };
 }
 

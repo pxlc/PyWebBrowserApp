@@ -338,10 +338,17 @@ function PyWebBrowserApp()
             'update_progress_fn': update_progress_fn,
             'task_ended_fn': task_ended_fn,
         };
-    }
+    };
 
     // [ end of API calls ]
     // ======================================================================================
+
+    // Utility methods
+    _self.sanitize_string_for_html = function(text) {
+        var element = document.createElement('div');
+        element.innerText = text;
+        return element.innerHTML;
+    };
 }
 
 //
