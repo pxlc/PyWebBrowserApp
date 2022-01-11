@@ -2,6 +2,7 @@
 function ${P}() {
     let _self = this;
 
+    _self.last_valid_path = '';
     _self.outer_div = null;
 
     _self.init = function()  // this is custom initialization for the specific plugin
@@ -65,11 +66,12 @@ function ${P}() {
         path_text_input_el.classList.remove("${P}_error", "${P}_success");
 
         if (is_path_valid && dir_items_info) {
+            _self.last_valid_path = dirpath_value;
             path_text_input_el.classList.add("${P}_success");
-            console.log(dir_items_info)
             _self.fill_folders_listing(dir_items_info.folders);
             _self.fill_files_listing(dir_items_info.files);
         } else {
+            _self.last_valid_path = '';
             path_text_input_el.classList.add("${P}_error");
             _self.clear_folders_listing();
             _self.clear_files_listing();
@@ -85,11 +87,15 @@ function ${P}() {
     {
         let folder_listing_div_el = document.getElementById('id_${P}_navArea_foldersListing');
 
-        let html_str_list = ['<ul class="${P}_folder_listing">', '<li class="${P}_item ${P}_no_text_select">..</li>'];
+        let html_str_list = [
+            '<ul class="${P}_folder_listing">',
+            '<li class="${P}_item ${P}_no_text_select" ondblclick="pwba.${P}.go_up_one_dir();">..</li>'
+        ];
+
         for (var c=0; c < folder_list.length; c++) {
             let safe_foldername = pwba.sanitize_string_for_html(folder_list[c]);
             html_str_list.push('<li class="${P}_item ${P}_no_text_select" title="' + safe_foldername + '"' +
-                                'onclick="pwba.${P}.select_folder_item(this);">' + safe_foldername + '</li>');
+                                'ondblclick="pwba.${P}.select_folder_item(this);">' + safe_foldername + '</li>');
         }
         html_str_list.push('</ul>');
 
@@ -128,9 +134,26 @@ function ${P}() {
         }
     };
 
+    _self.go_up_one_dir = function()
+    {
+        if (! _self.last_valid_path)
+            return;
+
+        // For now assume we are on Windows and that path is not a UNC path
+        let bits = _self.last_valid_path.split('/');
+        if (bits.length < 2)
+            return; // this means that there is no parent dir to go up to!
+
+        let up_one_dir_path = bits.slice(0, -1).join('/');
+        _self.set_path_value(up_one_dir_path);
+        _self.validate_dirpath(up_one_dir_path, "pwba.${P}.apply_path_input_validation");
+    }
+
     _self.select_folder_item = function(li_el)
     {
-        alert('Folder name: ' + li_el._original_foldername);
+        let folder_path = _self.last_valid_path + '/' + li_el._original_foldername;
+        _self.set_path_value(folder_path);
+        _self.validate_dirpath(folder_path, "pwba.${P}.apply_path_input_validation");
     };
 
     _self.select_file_item = function(li_el)
@@ -149,10 +172,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let path_edit_el = document.getElementById("id_${P}_pathEdit");
     path_edit_el.onkeyup = function(e) {
         if (e.key === 'Enter' || e.code === 13) {
-            let path_value = pwba.${P}.get_path_value();
-            if (path_value) {
-                pwba.${P}.validate_dirpath(path_value, "pwba.${P}.apply_path_input_validation");
-            }
+            path_edit_el.blur();
         }
     };
     path_edit_el.onblur = function(e) {

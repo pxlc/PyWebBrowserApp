@@ -58,3 +58,13 @@ class Plugin(PluginBase):
 
         self.plugin_to_webbrowser('roundtrip_from_python', {'alert_msg': alert_msg})
 
+    # -------------------------------------------------------------------------
+    # NOTE: to get list of drive letters for quick links use Windows command:
+    #
+    #            wmic logicaldisk get name
+    #
+    #       ... get output from running command as a subprocess. First line is
+    #       a header line (so skip it); after that will be a list of active
+    #       drive letters, one per line.
+    # -------------------------------------------------------------------------
+
