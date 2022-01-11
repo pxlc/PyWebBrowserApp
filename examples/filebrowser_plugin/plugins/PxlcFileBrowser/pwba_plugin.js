@@ -9,8 +9,40 @@ function ${P}() {
     {
     };
 
-    _self.show = function()
+    _self.show = function(dialog_title, open_btn_label, filename_edit_mode)
     {
+        if (! dialog_title)
+            dialog_title = 'File Browser';
+        document.getElementById('id_${P}_dialog_title').innerHTML = pwba.sanitize_string_for_html(dialog_title);
+
+        if (! open_btn_label)
+            open_btn_label = 'Open';
+        document.getElementById('id_${P}_open_btn').innerHTML = pwba.sanitize_string_for_html(open_btn_label);
+
+        //
+        // filename_edit_modes: 'allow_edit', 'display_only', 'hidden'
+        //
+        let filename_div_el = document.getElementById('id_${P}_filename_div');
+        let filename_edit_el = document.getElementById('id_${P}_filenameEdit');
+
+        if (filename_edit_mode == 'allow_edit') {
+            filename_edit_el.removeAttribute('readonly');
+            filename_edit_el.removeAttribute('disabled');
+            filename_div_el.style.display = 'block';
+        }
+        else if (filename_edit_mode == 'display_only')
+        {
+            filename_edit_el.setAttribute('readonly', true);
+            filename_edit_el.setAttribute('disabled', true);
+            filename_div_el.style.display = 'block';
+        }
+        else {
+            // otherwise assume 'hidden' mode
+            filename_edit_el.setAttribute('readonly', true);
+            filename_edit_el.setAttribute('disabled', true);
+            filename_div_el.style.display = 'none';
+        }
+
         if (! _self.outer_div) {
             _self.outer_div = document.getElementById("id_${P}_outer");
         }

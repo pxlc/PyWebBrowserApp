@@ -51,7 +51,9 @@ function click_me() {
 }
 
 function open_plugin_popup() {
-    pwba.PxlcFileBrowser.show();
+    pwba.PxlcFileBrowser.show('File Save', 'Save', 'allow_edit');
+    // pwba.PxlcFileBrowser.show('File Open', 'Open', 'display_only');
+    // pwba.PxlcFileBrowser.show('Select Folder', 'Select', 'hidden');
 }
 
 </script>

@@ -3,7 +3,7 @@
 <div id="id_${P}_outer" class="${P}_outer" style="display: none;">
 
     <div class="${P}_titlebar">
-        <span>File Browser</span>
+        <span id="id_${P}_dialog_title">File Browser</span>
         <span class="${P}_close_btn" onclick="pwba.${P}.hide();">&times;</span>
     </div>
 
@@ -65,13 +65,13 @@
 
     </div>
 
-    <div class="${P}_filename_div">
+    <div id="id_${P}_filename_div" class="${P}_filename_div">
         <span class="${P}_filename_label">File name:</span>
         <input id="id_${P}_filenameEdit" class="${P}_filenameEdit" type="text" />
     </div>
 
     <div class="${P}_open_btn">
-        Open
+        <span id="id_${P}_open_btn">Open</span>
     </div>
 
     <div class="${P}_cancel_btn">

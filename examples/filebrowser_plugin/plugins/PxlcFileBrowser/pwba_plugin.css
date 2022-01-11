@@ -16,7 +16,7 @@ input:focus{
 .${P}_outer {
     width: 800px;
     max-width: 800px;
-    height: 608px;
+    height: 618px;
 
     background-color: #A9A9A9; /* DarkGrey */
     border-radius: 6pt;
@@ -157,12 +157,12 @@ input:focus{
     padding-right: 10px;
     border-radius: 4pt;
 
-    width: 80px;
+    width: 120px;
     text-align: center;
 
     position: absolute;
     top: 566px;
-    left: 525px;
+    left: 480px;
 
     cursor: pointer;
 }
@@ -176,12 +176,12 @@ input:focus{
     padding-right: 10px;
     border-radius: 4pt;
 
-    width: 80px;
+    width: 120px;
     text-align: center;
 
     position: absolute;
     top: 566px;
-    left: 645px;
+    left: 640px;
 
     cursor: pointer;
 }
@@ -189,7 +189,7 @@ input:focus{
 .${P}_filename_div {
     width: 608px;
     position: absolute;
-    top: 528px;
+    top: 525px;
     left: 180px;
 }
 
