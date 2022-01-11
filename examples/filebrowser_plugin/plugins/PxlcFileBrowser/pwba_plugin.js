@@ -75,10 +75,20 @@ function ${P}() {
 document.addEventListener('DOMContentLoaded', (event) => {
     //the event occurred
     console.log(':: EXECUTING onload callback for ENTER key.');
-    document.getElementById("id_${P}_pathEdit").onkeyup = function(e) {
+
+    let path_edit_el = document.getElementById("id_${P}_pathEdit");
+    path_edit_el.onkeyup = function(e) {
         if (e.key === 'Enter' || e.code === 13) {
-            console.log(':: Got ENTER key!'); // TODO: validate path entered here
-            pwba.${P}.validate_dirpath(pwba.${P}.get_path_value(), "pwba.${P}.apply_path_input_validation");
+            let path_value = pwba.${P}.get_path_value();
+            if (path_value) {
+                pwba.${P}.validate_dirpath(path_value, "pwba.${P}.apply_path_input_validation");
+            }
+        }
+    };
+    path_edit_el.onblur = function(e) {
+        let path_value = pwba.${P}.get_path_value();
+        if (path_value) {
+            pwba.${P}.validate_dirpath(path_value, "pwba.${P}.apply_path_input_validation");
         }
     };
 });
