@@ -262,13 +262,19 @@ ul.${P}_folder_listing {
 li.${P}_item {
     font-family: FiraCode, 'Courier New', Courier, monospace;
     font-size: 11pt;
-    /* font-weight: bold; */
-
+    font-weight: bold;
+    color: rgb(0, 0, 0);
     cursor: pointer;
 }
 
 li.${P}_item:hover {
     background-color: aqua;
+}
+
+li.${P}_item_fade {
+    font-family: FiraCode, 'Courier New', Courier, monospace;
+    font-size: 11pt;
+    color: rgb(110, 110, 110);
 }
 
 .${P}_no_text_select {

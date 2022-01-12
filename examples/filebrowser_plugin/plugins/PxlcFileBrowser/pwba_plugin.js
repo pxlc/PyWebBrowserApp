@@ -2,6 +2,8 @@
 function ${P}() {
     let _self = this;
 
+    _self.filename_edit_mode = '';
+    _self.file_ext_filter = null;
     _self.last_valid_path = '';
     _self.outer_div = null;
 
@@ -9,7 +11,7 @@ function ${P}() {
     {
     };
 
-    _self.show = function(dialog_title, open_btn_label, filename_edit_mode)
+    _self.show = function(dialog_title, open_btn_label, filename_edit_mode, file_ext_filter)
     {
         if (! dialog_title)
             dialog_title = 'File Browser';
@@ -43,9 +45,11 @@ function ${P}() {
             filename_div_el.style.display = 'none';
         }
 
-        if (! _self.outer_div) {
+        _self.filename_edit_mode = filename_edit_mode;
+        _self.file_ext_filter = file_ext_filter;  // this is null or a list of valid extensions, e.g. ['md', 'txt', '']
+
+        if (! _self.outer_div)
             _self.outer_div = document.getElementById("id_${P}_outer");
-        }
         _self.outer_div.style.display = "block";
     };
 
@@ -152,8 +156,23 @@ function ${P}() {
         let html_str_list = ['<ul class="${P}_file_listing">'];
         for (var c=0; c < file_list.length; c++) {
             let safe_filename = pwba.sanitize_string_for_html(file_list[c]);
-            html_str_list.push('<li class="${P}_item ${P}_no_text_select" title="' + safe_filename + '"' +
-                                'onclick="pwba.${P}.select_file_item(this);">' + safe_filename + '</li>');
+            let filename = file_list[c];
+            if (! _self.file_ext_filter) {
+                html_str_list.push('<li class="${P}_item ${P}_no_text_select" title="' + safe_filename + '"' +
+                                    'onclick="pwba.${P}.select_file_item(this);">' + safe_filename + '</li>');
+            } else {
+                let dot_idx = filename.lastIndexOf('.');
+                let ext = '';
+                if (dot_idx > -1)
+                    ext = filename.substr(dot_idx+1)
+                if (_self.file_ext_filter.includes(ext)) {
+                    html_str_list.push('<li class="${P}_item ${P}_no_text_select" title="' + safe_filename + '"' +
+                                        'onclick="pwba.${P}.select_file_item(this);">' + safe_filename + '</li>');
+                } else {
+                    html_str_list.push('<li class="${P}_item_fade ${P}_no_text_select" title="' + safe_filename + '">' +
+                                        safe_filename + '</li>');
+                }
+            }
         }
         html_str_list.push('</ul>');
 
