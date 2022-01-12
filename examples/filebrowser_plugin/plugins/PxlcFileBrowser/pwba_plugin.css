@@ -13,6 +13,17 @@ input:focus{
     outline: none;
 }
 
+.${P}_modal_screen {
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1;
+
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+}
+
 .${P}_outer {
     width: 800px;
     max-width: 800px;
@@ -24,8 +35,11 @@ input:focus{
     padding: 0px;
 
     position: absolute;
-    top: 30px;
-    left: 30px;
+    top: 50%;
+    left: 50%;
+    transform:translate(-50%, -50%);
+
+    z-index: 2;
 }
 
 .${P}_titlebar {

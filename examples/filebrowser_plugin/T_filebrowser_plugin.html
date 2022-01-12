@@ -50,8 +50,12 @@ function click_me() {
     pwba.to_python('test_one_js_click', {'a': 'one', 'b': 'two'});
 }
 
-function filebrowser_callback(path)
+function filebrowser_callback(path, status, message_on_error)
 {
+    // path will be null if action was cancelled
+    // status will be one of: ['valid', 'error', 'cancelled']
+    // message_on_error will be a text string if status is 'error', otherwise will be empty string (i.e. '')
+
     alert(':: File Browser returned path: ' + path);
 }
 

@@ -6,6 +6,7 @@ function ${P}() {
     _self.file_ext_filter = null;
     _self.last_valid_path = '';
     _self.outer_div = null;
+    _self.modal_screen_div = null;
     _self.caller_callback_fn = null;
 
     _self.init = function()  // this is custom initialization for the specific plugin
@@ -52,17 +53,17 @@ function ${P}() {
 
         _self.set_filename_value('');
 
-        if (! _self.outer_div)
-            _self.outer_div = document.getElementById("id_${P}_outer");
-        _self.outer_div.style.display = "block";
+        if (! _self.modal_screen_div)
+            _self.modal_screen_div = document.getElementById("id_${P}_modal_screen");
+        _self.modal_screen_div.style.display = "block";
     };
 
     _self.hide = function()
     {
-        if (! _self.outer_div) {
-            _self.outer_div = document.getElementById("id_${P}_outer");
+        if (! _self.modal_screen_div) {
+            _self.modal_screen_div = document.getElementById("id_${P}_modal_screen");
         }
-        _self.outer_div.style.display = "none";
+        _self.modal_screen_div.style.display = "none";
     };
 
     _self.accept_action = function()
@@ -74,8 +75,8 @@ function ${P}() {
             return; // not valid for acceptance
 
         if (_self.filename_edit_mode == 'hidden') {  // this means we are just selecting a path
-            _self.hide();
             setTimeout(_self.caller_callback_fn, 100, path);
+            _self.hide();
             return;
         }
 
@@ -83,14 +84,14 @@ function ${P}() {
         if (! filename)
             return;  //  need both a valid path and a valid filename
 
+        setTimeout(_self.caller_callback_fn, 100, path + '/' + filename, 'valid', '');
         _self.hide();
-        setTimeout(_self.caller_callback_fn, 100, path + '/' + filename);
     };
 
     _self.cancel_action = function()
     {
+        setTimeout(_self.caller_callback_fn, 100, null, 'cancelled', '');
         _self.hide();
-        setTimeout(_self.caller_callback_fn, 100, null);
     };
 
     _self.validate_dirpath = function(dirpath_to_validate, callback_fn_name)

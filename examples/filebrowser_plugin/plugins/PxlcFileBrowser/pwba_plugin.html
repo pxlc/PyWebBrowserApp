@@ -1,8 +1,9 @@
 
 <!-- START File Dialog UI -->
-<div id="id_${P}_outer" class="${P}_outer" style="display: none;">
+<div id="id_${P}_modal_screen" class="${P}_modal_screen" style="display: none;" onclick="event.stopPropagation();">
+<div id="id_${P}_outer" class="${P}_outer">
 
-    <div class="${P}_titlebar">
+    <div class="${P}_titlebar ${P}_no_text_select">
         <span id="id_${P}_dialog_title">File Browser</span>
         <span class="${P}_close_btn" onclick="pwba.${P}.cancel_action();">&times;</span>
     </div>
@@ -17,14 +18,14 @@
             <tr> <!-- Navigation columns -->
 
             <td class="${P}_navArea_colNarrow" id="id_${P}_navArea_quickLinksListing">
-                <div class="${P}_quick_link">My Documents</div>
-                <div class="${P}_quick_link">Desktop</div>
-                <div class="${P}_quick_link">C: drive</div>
-                <div class="${P}_quick_link">P: drive</div>
+                <div class="${P}_quick_link ${P}_no_text_select">My Documents</div>
+                <div class="${P}_quick_link ${P}_no_text_select">Desktop</div>
+                <div class="${P}_quick_link ${P}_no_text_select">C: drive</div>
+                <div class="${P}_quick_link ${P}_no_text_select">P: drive</div>
             </td>
 
             <td class="${P}_navArea_col">
-                <div class="${P}_navArea_col_titlebar">
+                <div class="${P}_navArea_col_titlebar ${P}_no_text_select">
                     Folders
                 </div>
 
@@ -41,7 +42,7 @@
             </td>
 
             <td class="${P}_navArea_col">
-                <div class="${P}_navArea_col_titlebar">
+                <div class="${P}_navArea_col_titlebar ${P}_no_text_select">
                     Files
                 </div>
 
@@ -70,14 +71,15 @@
         <input id="id_${P}_filenameEdit" class="${P}_filenameEdit" type="text" />
     </div>
 
-    <div class="${P}_open_btn" onclick="pwba.${P}.accept_action();">
+    <div class="${P}_open_btn ${P}_no_text_select" onclick="pwba.${P}.accept_action();">
         <span id="id_${P}_open_btn">Open</span>
     </div>
 
-    <div class="${P}_cancel_btn" onclick="pwba.${P}.cancel_action();">
+    <div class="${P}_cancel_btn ${P}_no_text_select" onclick="pwba.${P}.cancel_action();">
         Cancel
     </div>
 
-</div>
-</div>
+</div> <!-- outer -->
+</div> <!-- modal screen -->
+
 <!-- END File Dialog UI -->
