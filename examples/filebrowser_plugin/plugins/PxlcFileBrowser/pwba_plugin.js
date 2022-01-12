@@ -94,6 +94,18 @@ function ${P}() {
         path_text_input_el.value = new_path_value;
     };
 
+    _self.get_filename_value = function()
+    {
+        let filename_value = document.getElementById("id_${P}_filenameEdit").value;
+        return filename_value;
+    };
+
+    _self.set_filename_value = function(new_filename_value)
+    {
+        let filename_text_input_el = document.getElementById("id_${P}_filenameEdit");
+        filename_text_input_el.value = new_filename_value;
+    };
+
     _self.apply_path_input_validation = function(dirpath_value, is_path_valid, dir_items_info)
     {
         let path_text_input_el = document.getElementById("id_${P}_pathEdit");
@@ -147,6 +159,7 @@ function ${P}() {
     _self.clear_files_listing = function() {
         let files_listing_ul_el = document.getElementById('id_${P}_navArea_filesListing');
         files_listing_ul_el.innerHTML = '';
+        _self.set_filename_value('');
     };
 
     _self.fill_files_listing = function(file_list)
@@ -209,7 +222,7 @@ function ${P}() {
 
     _self.select_file_item = function(li_el)
     {
-        alert('File name: ' + li_el._original_filename);
+        _self.set_filename_value(li_el._original_filename);
     };
 }
 
