@@ -23,6 +23,10 @@ function ${P}() {
             open_btn_label = 'Open';
         document.getElementById('id_${P}_open_btn').innerHTML = pwba.sanitize_string_for_html(open_btn_label);
 
+        _self.filename_edit_mode = filename_edit_mode;
+        _self.file_ext_filter = file_ext_filter;  // this is null or a list of valid extensions, e.g. ['md', 'txt', '']
+        _self.caller_callback_fn = caller_callback_fn;
+
         //
         // filename_edit_modes: 'allow_edit', 'display_only', 'hidden'
         //
@@ -45,11 +49,8 @@ function ${P}() {
             filename_edit_el.setAttribute('readonly', true);
             filename_edit_el.setAttribute('disabled', true);
             filename_div_el.style.display = 'none';
+            _self.file_ext_filter =[null];
         }
-
-        _self.filename_edit_mode = filename_edit_mode;
-        _self.file_ext_filter = file_ext_filter;  // this is null or a list of valid extensions, e.g. ['md', 'txt', '']
-        _self.caller_callback_fn = caller_callback_fn;
 
         _self.set_filename_value('');
 
@@ -157,6 +158,12 @@ function ${P}() {
             _self.clear_folders_listing();
             _self.clear_files_listing();
         }
+    };
+
+    _self.select_quick_link = function(path_value)
+    {
+        _self.set_path_value(path_value);
+        _self.validate_dirpath(path_value, "pwba.${P}.apply_path_input_validation");
     };
 
     _self.clear_folders_listing = function() {

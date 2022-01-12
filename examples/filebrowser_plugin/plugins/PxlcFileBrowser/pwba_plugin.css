@@ -101,10 +101,15 @@ input:focus{
 }
 
 .${P}_navArea_colNarrow {
-    width: 20%;
-    height: 100%;
+    width:     150px;
+    max-width: 150px;
+    min-width: 150px;
+
+    height:     500px;
+    max-height: 500px;
+    min-height: 500px;
+
     padding: 5px;
-    padding-right: 15px;
     /* border: solid 1px grey; */
     vertical-align: top;
 }
@@ -160,6 +165,22 @@ input:focus{
     min-height: 400px;
     max-height: 400px;
 
+    overflow-y: scroll;
+    white-space: nowrap;
+}
+
+.${P}_navArea_quickListing {
+    background-color: #D3D3D3; /* LightGrey */
+
+    width:     150px;
+    min-width: 150px;
+    max-width: 150px;
+
+    height:     400px;
+    min-height: 400px;
+    max-height: 400px;
+
+    overflow: hidden;
     overflow-y: scroll;
     white-space: nowrap;
 }
@@ -273,6 +294,20 @@ ul.${P}_folder_listing {
     list-style-image: url('file://${P_ROOT}/res/remix_icon/folder-4-line_14px.png');
     padding-left: 25px;
     margin-top: 6px;
+}
+
+ul.${P}_quick_folder_listing {
+    list-style-image: url('file://${P_ROOT}/res/remix_icon/folder-4-line_14px.png');
+    padding-left: 25px;
+    margin-top: 6px;
+    /* text-align: center; */
+}
+
+ul.${P}_quick_drive_listing {
+    list-style-image: url('file://${P_ROOT}/res/remix_icon/hard-drive-2-line_14px.png');
+    padding-left: 25px;
+    margin-top: 0px;
+    /* text-align: center; */
 }
 
 li.${P}_item {

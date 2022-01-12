@@ -18,10 +18,26 @@
             <tr> <!-- Navigation columns -->
 
             <td class="${P}_navArea_colNarrow" id="id_${P}_navArea_quickLinksListing">
+                <div class="${P}_navArea_col_titlebar ${P}_no_text_select">
+                    Quick Links
+                </div>
+
+                <div class="${P}_navArea_quickListing" id="id_${P}_navArea_quickListing">
+                    <ul class="${P}_quick_folder_listing">
+                        <li class="${P}_item ${P}_no_text_select" onclick="pwba.${P}.select_quick_link('$USERPROFILE/Desktop');">Desktop</li>
+                        <li class="${P}_item ${P}_no_text_select" onclick="pwba.${P}.select_quick_link('$USERPROFILE/Documents');">Documents</li>
+                        <li class="${P}_item ${P}_no_text_select" onclick="pwba.${P}.select_quick_link('$USERPROFILE/Downloads');">Downloads</li>
+                    </ul>
+                    <ul class="${P}_quick_drive_listing">
+                        <li class="${P}_item ${P}_no_text_select" onclick="pwba.${P}.select_quick_link('C:/');">C:</li>
+                    </ul>
+                </div>
+                <!--
                 <div class="${P}_quick_link ${P}_no_text_select">My Documents</div>
                 <div class="${P}_quick_link ${P}_no_text_select">Desktop</div>
                 <div class="${P}_quick_link ${P}_no_text_select">C: drive</div>
                 <div class="${P}_quick_link ${P}_no_text_select">P: drive</div>
+                -->
             </td>
 
             <td class="${P}_navArea_col">

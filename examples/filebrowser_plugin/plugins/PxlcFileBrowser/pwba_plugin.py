@@ -25,6 +25,8 @@ class Plugin(PluginBase):
         is_path_valid = False
         dir_items_info = None
 
+        if len(dirpath_to_validate) == 2 and dirpath_to_validate[1] == ':':
+            dirpath_to_validate += '/'
         dirpath_to_validate = os.path.expandvars(dirpath_to_validate).replace('\\', '/')
 
         if os.path.isdir(dirpath_to_validate):
