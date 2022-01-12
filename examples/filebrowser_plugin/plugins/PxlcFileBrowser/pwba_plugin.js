@@ -6,12 +6,13 @@ function ${P}() {
     _self.file_ext_filter = null;
     _self.last_valid_path = '';
     _self.outer_div = null;
+    _self.caller_callback_fn = null;
 
     _self.init = function()  // this is custom initialization for the specific plugin
     {
     };
 
-    _self.show = function(dialog_title, open_btn_label, filename_edit_mode, file_ext_filter)
+    _self.show = function(dialog_title, open_btn_label, filename_edit_mode, file_ext_filter, caller_callback_fn)
     {
         if (! dialog_title)
             dialog_title = 'File Browser';
@@ -47,6 +48,9 @@ function ${P}() {
 
         _self.filename_edit_mode = filename_edit_mode;
         _self.file_ext_filter = file_ext_filter;  // this is null or a list of valid extensions, e.g. ['md', 'txt', '']
+        _self.caller_callback_fn = caller_callback_fn;
+
+        _self.set_filename_value('');
 
         if (! _self.outer_div)
             _self.outer_div = document.getElementById("id_${P}_outer");
@@ -59,6 +63,34 @@ function ${P}() {
             _self.outer_div = document.getElementById("id_${P}_outer");
         }
         _self.outer_div.style.display = "none";
+    };
+
+    _self.accept_action = function()
+    {
+        let path = _self.get_path_value();
+        let filename = _self.get_filename_value();
+
+        if (_self.last_valid_path !== path)
+            return; // not valid for acceptance
+
+        if (_self.filename_edit_mode == 'hidden') {  // this means we are just selecting a path
+            _self.hide();
+            setTimeout(_self.caller_callback_fn, 100, path);
+            return;
+        }
+
+        // otherwise we need to validate filename too
+        if (! filename)
+            return;  //  need both a valid path and a valid filename
+
+        _self.hide();
+        setTimeout(_self.caller_callback_fn, 100, path + '/' + filename);
+    };
+
+    _self.cancel_action = function()
+    {
+        _self.hide();
+        setTimeout(_self.caller_callback_fn, 100, null);
     };
 
     _self.validate_dirpath = function(dirpath_to_validate, callback_fn_name)

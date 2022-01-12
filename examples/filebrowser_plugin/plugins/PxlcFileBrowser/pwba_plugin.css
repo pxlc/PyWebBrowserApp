@@ -132,6 +132,7 @@ input:focus{
     max-height: 400px;
 
     overflow-y: scroll;
+    white-space: nowrap;
 }
 
 .${P}_navArea_foldersListing {
@@ -146,6 +147,7 @@ input:focus{
     max-height: 400px;
 
     overflow-y: scroll;
+    white-space: nowrap;
 }
 
 .${P}_open_btn {

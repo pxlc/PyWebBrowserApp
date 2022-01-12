@@ -4,7 +4,7 @@
 
     <div class="${P}_titlebar">
         <span id="id_${P}_dialog_title">File Browser</span>
-        <span class="${P}_close_btn" onclick="pwba.${P}.hide();">&times;</span>
+        <span class="${P}_close_btn" onclick="pwba.${P}.cancel_action();">&times;</span>
     </div>
 
     <div class="${P}_body">
@@ -70,11 +70,11 @@
         <input id="id_${P}_filenameEdit" class="${P}_filenameEdit" type="text" />
     </div>
 
-    <div class="${P}_open_btn">
+    <div class="${P}_open_btn" onclick="pwba.${P}.accept_action();">
         <span id="id_${P}_open_btn">Open</span>
     </div>
 
-    <div class="${P}_cancel_btn">
+    <div class="${P}_cancel_btn" onclick="pwba.${P}.cancel_action();">
         Cancel
     </div>
 

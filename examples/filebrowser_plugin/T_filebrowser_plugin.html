@@ -50,10 +50,15 @@ function click_me() {
     pwba.to_python('test_one_js_click', {'a': 'one', 'b': 'two'});
 }
 
+function filebrowser_callback(path)
+{
+    alert(':: File Browser returned path: ' + path);
+}
+
 function open_plugin_popup() {
     // pwba.PxlcFileBrowser.show('File Save', 'Save', 'allow_edit', null);
-    pwba.PxlcFileBrowser.show('File Open', 'Open', 'display_only', ['md', 'txt', '']);
-    // pwba.PxlcFileBrowser.show('Select Folder', 'Select', 'hidden', null);
+    // pwba.PxlcFileBrowser.show('File Open', 'Open', 'display_only', ['md', 'txt', ''], filebrowser_callback);
+    pwba.PxlcFileBrowser.show('Select Folder', 'Select', 'hidden', null, filebrowser_callback);
 }
 
 </script>
