@@ -28,11 +28,6 @@ import json
 import logging
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__)).replace('\\', '/')
-APP_PLUGINS_PATH = '%s/plugins' % APP_ROOT
-
-# Set things up to be able to point to plugins inside of this app folder
-os.environ['PWBA_PLUGINS_PATH'] = os.pathsep.join([APP_PLUGINS_PATH, os.getenv('PWBA_PLUGINS_PATH')]) \
-                                    if os.getenv('PWBA_PLUGINS_PATH') else APP_PLUGINS_PATH
 
 from PyWebBrowserApp import PyWebBrowserAppBase, register_op
 
@@ -54,7 +49,7 @@ class CustomPyWebBrowserApp(PyWebBrowserAppBase):
                                                     webbrowser_path=webbrowser_path)
 
         # Do any required data set-up for your app here
-        self.request_plugin('PxlcFileBrowser')
+        self.request_plugin('FileBrowser')
 
     # --------------------------------------------------------------------------------------------------------
     # "setup_extra_template_vars()" is a REQUIRED override method
