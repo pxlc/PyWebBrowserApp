@@ -29,7 +29,7 @@ class PyWebBrowserAppBase(PyWebBrowserAppWithPluginsBase):
 
     def __init__(self, app_module_filepath, webbrowser_path='', width=480, height=600, template_dirpath='',
                  start_html_filename='', config_filepath='', log_to_shell=False, log_level_str='',
-                 app_temp_root='', webbrowser_data_path=''):
+                 app_temp_root='', webbrowser_data_path='', on_start_options_d=None):
 
         super(PyWebBrowserAppBase, self).__init__(app_module_filepath, width=width, height=height,
                                                   template_dirpath=template_dirpath,
@@ -40,4 +40,18 @@ class PyWebBrowserAppBase(PyWebBrowserAppWithPluginsBase):
                                                   app_temp_root=app_temp_root,
                                                   webbrowser_path=webbrowser_path,
                                                   webbrowser_data_path=webbrowser_data_path)
+
+        self._on_start_options_d = on_start_options_d
+
+    def has_on_start_option(self, option_key):
+
+        if (self._on_start_options_d):
+            return self._on_start_options_d.has_key(option_key)
+        return False
+
+    def get_on_start_option(self, option_key):
+
+        if (self._on_start_options_d):
+            return self._on_start_options_d.get(option_key)
+        return None
 

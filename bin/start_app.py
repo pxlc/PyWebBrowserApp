@@ -65,6 +65,7 @@ def usage():
     print('')
     print('     -h | --help ... print this usage message')
     print('     -s | --shell-logging ... log messages to shell console as well')
+    print('     -o <START_OPTIONS_JSON> | --options-on-start <START_OPTIONS_JSON> ... JSON string with on start options')
     print('     -l <LOGLEVEL> | --log-level <LOGLEVEL> ... "DEBUG", "INFO", "WARNING", "ERROR", or "CRITICAL"')
     print('     -b <WEBBROWSERPATH> | --browser-path <WEBBROWSERPATH> ... full path to webbrowser executable')
     print('     -c <CONFIGFILE> | --config-file <CONFIGFILE> ... full path to config file to use')
@@ -77,8 +78,8 @@ def usage():
 
 def main(in_args):
 
-    short_opt_str = 'hsl:b:c:t:W:H:'
-    long_opt_list = ['help', 'shell-logging', 'log-level=', 'browser-path=', 'config-file=',
+    short_opt_str = 'hso:l:b:c:t:W:H:'
+    long_opt_list = ['help', 'shell-logging', 'options-on-start=', 'log-level=', 'browser-path=', 'config-file=',
                      'template-filepath', 'width=', 'height=']
     try:
         opt_list, arg_list = getopt.getopt(in_args, short_opt_str, long_opt_list)
@@ -89,6 +90,7 @@ def main(in_args):
         sys.exit(2)
 
     shell_logging = False
+    on_start_options_d = None
     log_level_str = 'ERROR'
     webbrowser_path = ''
     config_filepath = ''
@@ -102,6 +104,14 @@ def main(in_args):
             sys.exit(0)
         elif opt_flag in ('-s', '--shell-logging'):
             shell_logging = True
+        elif opt_flag in ('-o', '--options-on-start'):
+            on_start_options_d = json.loads(opt_value)
+            if on_start_options_d:
+                print('')
+                print('>>> On start options:')
+                print('')
+                print(json.dumps(on_start_options_d, indent=4, sort_keys=True))
+                print('')
         elif opt_flag in ('-l', '--log-level'):
             log_level_str = opt_value
         elif opt_flag in ('-b', '--browser-path'):
@@ -125,7 +135,8 @@ def main(in_args):
 
     launcher.launch_app(app_module_path, shell_logging=shell_logging, log_level_str=log_level_str,
                         config_filepath=config_filepath, template_filepath=template_filepath,
-                        width=width, height=height, webbrowser_path=webbrowser_path)
+                        width=width, height=height, webbrowser_path=webbrowser_path,
+                        on_start_options_d=on_start_options_d)
 
 
 if __name__ == '__main__':

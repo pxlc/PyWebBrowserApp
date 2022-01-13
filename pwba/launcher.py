@@ -31,7 +31,7 @@ import importlib
 
 
 def launch_app(app_module_path, shell_logging=False, log_level_str='ERROR', config_filepath='',
-               template_filepath='', width=0, height=0, webbrowser_path=''):
+               template_filepath='', width=0, height=0, webbrowser_path='', on_start_options_d=None):
 
     app_module_name = os.path.basename(app_module_path).replace('.py','')
     app_dir_path = os.path.dirname(app_module_path).replace('\\', '/')
@@ -53,6 +53,7 @@ def launch_app(app_module_path, shell_logging=False, log_level_str='ERROR', conf
         'log_to_shell': shell_logging,
         'log_level_str': log_level_str,
         'webbrowser_path': webbrowser_path,
+        'on_start_options_d': on_start_options_d,
     }
 
     if width:

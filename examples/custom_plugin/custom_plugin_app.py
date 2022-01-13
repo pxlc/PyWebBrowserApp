@@ -43,7 +43,7 @@ class CustomPyWebBrowserApp(PyWebBrowserAppBase):
 
     def __init__(self, app_module_path, width=480, height=600,
                  start_html_filename='', template_dirpath='', config_filepath='',
-                 log_to_shell=False, log_level_str='', webbrowser_path=''):
+                 log_to_shell=False, log_level_str='', webbrowser_path='', on_start_options_d=None)
 
         super(CustomPyWebBrowserApp, self).__init__(app_module_path, width=width, height=height,
                                                     template_dirpath=template_dirpath,
@@ -51,7 +51,8 @@ class CustomPyWebBrowserApp(PyWebBrowserAppBase):
                                                     config_filepath=config_filepath,
                                                     log_to_shell=log_to_shell,
                                                     log_level_str=log_level_str,
-                                                    webbrowser_path=webbrowser_path)
+                                                    webbrowser_path=webbrowser_path,
+                                                    on_start_options_d=on_start_options_d)
 
         # Do any required data set-up for your app here
         self.request_plugin('MyFirstPlugin')
