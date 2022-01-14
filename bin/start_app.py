@@ -105,7 +105,7 @@ def main(in_args):
         elif opt_flag in ('-s', '--shell-logging'):
             shell_logging = True
         elif opt_flag in ('-o', '--options-on-start'):
-            on_start_options_d = json.loads(opt_value)
+            on_start_options_d = json.loads(opt_value.replace('{{sp}}', ' '))
             if on_start_options_d:
                 print('')
                 print('>>> On start options:')
