@@ -177,13 +177,15 @@ function ${P}() {
 
         let html_str_list = [
             '<ul class="${P}_folder_listing">',
-            '<li class="${P}_item ${P}_no_text_select" ondblclick="pwba.${P}.go_up_one_dir();">..</li>'
+            '<li class="${P}_item ${P}_no_text_select" onclick="pwba.${P}.go_up_one_dir();">..</li>'
+            // '<li class="${P}_item ${P}_no_text_select" ondblclick="pwba.${P}.go_up_one_dir();">..</li>'
         ];
 
         for (var c=0; c < folder_list.length; c++) {
             let safe_foldername = pwba.sanitize_string_for_html(folder_list[c]);
             html_str_list.push('<li class="${P}_item ${P}_no_text_select" title="' + safe_foldername + '"' +
-                                'ondblclick="pwba.${P}.select_folder_item(this);">' + safe_foldername + '</li>');
+                                'onclick="pwba.${P}.select_folder_item(this);">' + safe_foldername + '</li>');
+                                // 'ondblclick="pwba.${P}.select_folder_item(this);">' + safe_foldername + '</li>');
         }
         html_str_list.push('</ul>');
 
