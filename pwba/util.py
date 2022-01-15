@@ -62,11 +62,8 @@ def now_datetime_str( format='full', two_digit_year=False ):
 
 def get_temp_path():
 
-    # if os.getenv('TEMP'):
-    #     return os.getenv('TEMP')
-
     if sys.platform == 'win32':
-        return os.path.join(os.getenv('USERPROFILE'), 'AppData', 'Local', 'Temp', 'PyWebBrowserApp')
+        return os.path.join(os.getenv('USERPROFILE'), 'AppData', 'Local', 'Temp', '__PyWebBrowserApp')
 
     if sys.platform in ('linux2', 'linux', 'darwin'):
         return os.path.expandvars('${HOME}/.PyWebBrowserApp')

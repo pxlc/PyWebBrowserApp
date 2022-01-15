@@ -85,7 +85,6 @@ class PyWebBrowserAppCoreBase(object):
         else:
             self.webbrowser_data_path = os.path.join(self.app_temp_root, '%s_browser_%s' % (self.app_short_name,
                                                                                         self.browser_name_tag))
-
         self.config = load_config_file(config_filepath)
 
         self.user = getpass.getuser()

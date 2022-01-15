@@ -28,6 +28,7 @@ import json
 import getopt
 import logging
 import importlib
+import traceback
 
 __PKG_ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('//', '/')
 __PYWEBSCKTSRVR_PATH = '%s/thirdparty/python-websocket-server' % __PKG_ROOT_PATH
@@ -65,7 +66,10 @@ def usage():
     print('')
     print('     -h | --help ... print this usage message')
     print('     -s | --shell-logging ... log messages to shell console as well')
-    print('     -o <START_OPTIONS_JSON> | --options-on-start <START_OPTIONS_JSON> ... JSON string with on start options')
+    print('     -o <START_OPTIONS_JSON> | --options-on-start <START_OPTIONS_JSON> ... JSON data format string,')
+    print('                                                                       OR a fiilepath to a JSON data file')
+    print('                                                                       (i.e. file with ".json" extension),')
+    print('                                                                       specifying options for start of app.')
     print('     -l <LOGLEVEL> | --log-level <LOGLEVEL> ... "DEBUG", "INFO", "WARNING", "ERROR", or "CRITICAL"')
     print('     -b <WEBBROWSERPATH> | --browser-path <WEBBROWSERPATH> ... full path to webbrowser executable')
     print('     -c <CONFIGFILE> | --config-file <CONFIGFILE> ... full path to config file to use')
@@ -105,7 +109,30 @@ def main(in_args):
         elif opt_flag in ('-s', '--shell-logging'):
             shell_logging = True
         elif opt_flag in ('-o', '--options-on-start'):
-            on_start_options_d = json.loads(opt_value.replace('{{sp}}', ' '))
+            if opt_value.endswith('.json'):
+                # this is path to JSON file so read it in
+                if os.path.isfile(opt_value):
+                    try:
+                        with open(opt_value, 'r') as in_fp:
+                            on_start_options_d = json.load(in_fp)
+                    except:
+                        print('')
+                        print('>> ERROR: Exception raised attampting to read JSON file: %s' % opt_value)
+                        print('          ... stack trace folllows.')
+                        print('')
+                        print(traceback.format_exc())
+                        print('')
+                        print('          ... continuing to start app, but NO start options will be loaded.')
+                        print('')
+                else:
+                    print('')
+                    print('>> ERROR: Starting options JSON file does not exist: %s' % opt_value)
+                    print('          ... continuing to start app, but NO start options will be loaded.')
+                    print('')
+            else:
+                # otherwise the string is directly JSON formatted data that replaces any spaces with {{sp}}
+                on_start_options_d = json.loads(opt_value.replace('{{sp}}', ' '))
+
             if on_start_options_d:
                 print('')
                 print('>>> On start options:')

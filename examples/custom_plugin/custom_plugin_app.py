@@ -43,7 +43,7 @@ class CustomPyWebBrowserApp(PyWebBrowserAppBase):
 
     def __init__(self, app_module_path, width=480, height=600,
                  start_html_filename='', template_dirpath='', config_filepath='',
-                 log_to_shell=False, log_level_str='', webbrowser_path='', on_start_options_d=None)
+                 log_to_shell=False, log_level_str='', webbrowser_path='', on_start_options_d=None):
 
         super(CustomPyWebBrowserApp, self).__init__(app_module_path, width=width, height=height,
                                                     template_dirpath=template_dirpath,
