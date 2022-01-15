@@ -79,12 +79,6 @@ class PyWebBrowserAppCoreBase(object):
         self.app_short_name = ''.join(cap_words)
         self.app_title_label = ' '.join(cap_words)  # default App Title
 
-        self.app_temp_root = app_temp_root if app_temp_root else util.get_app_user_temp_path(self.app_short_name)
-        if webbrowser_data_path:
-            self.webbrowser_data_path = '%s_%s' % (webbrowser_data_path, self.browser_name_tag)
-        else:
-            self.webbrowser_data_path = os.path.join(self.app_temp_root, '%s_browser_%s' % (self.app_short_name,
-                                                                                        self.browser_name_tag))
         self.config = load_config_file(config_filepath)
 
         self.user = getpass.getuser()
@@ -97,9 +91,20 @@ class PyWebBrowserAppCoreBase(object):
         self.session_start_dt_str = util.now_datetime_str('compact')
         self.session_id = '{a}_{u}_{dt}'.format(a=self.app_short_name, u=self.user, dt=self.session_start_dt_str)
 
+        self.app_temp_root = app_temp_root if app_temp_root else util.get_app_user_temp_path(self.app_short_name)
+
+        # establish session folder
+        session_foldername = '{a}_session_{dt}'.format(a=self.app_short_name, dt=self.session_start_dt_str)
+        self.session_temp_root = os.path.join(self.app_temp_root, session_foldername).replace('\\', '/')
+
+        if webbrowser_data_path:
+            self.webbrowser_data_path = '%s_%s' % (webbrowser_data_path, self.browser_name_tag)
+        else:
+            self.webbrowser_data_path = os.path.join(self.session_temp_root,
+                                                     '_browser_data_%s' % self.browser_name_tag)
         # use session_id as logger name
-        log_filename = util.get_app_session_log_filename(dt_str=self.session_start_dt_str)
-        self.log_file = os.path.join(self.app_temp_root, '%s_logs' % self.app_short_name, log_filename)
+        log_filename = 'session_%s.log' % self.session_start_dt_str
+        self.log_file = '%s/%s' % (self.session_temp_root, log_filename)
 
         print('')
         print(':: log file path: %s' % self.log_file)
@@ -243,7 +248,17 @@ class PyWebBrowserAppCoreBase(object):
             self.ws_server.send_message(client, json.dumps(msg_obj))
 
     def clean_up(self):
-        pass
+
+        cleanup_script_path = '%s/bin/_cleanup_session_data.py' % PYWEBBROWSERAPP_ROOT
+        python_exe_path = sys.executable
+
+        if sys.platform == 'win32':
+            system_command_str = 'START /B "" "%s" "%s" "%s"' % (python_exe_path, cleanup_script_path,
+                                                              self.session_temp_root)
+            os.system(system_command_str)
+        else:
+            # TODO: support session data cleanup on Linux/MacOS
+            pass
 
     def _ws_client_left(self, client, server):
 

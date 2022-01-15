@@ -65,7 +65,7 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppCoreBase):
                                                              webbrowser_path=webbrowser_path,
                                                              webbrowser_data_path=webbrowser_data_path)
 
-        self.active_plugins_root = os.path.join(self.app_temp_root, 'plugins_%s' % self.session_id)
+        self.active_plugins_root = os.path.join(self.session_temp_root, 'plugins').replace('\\', '/')
 
         self.plugin_list = []
         self.plugin_info_by_name = {}
@@ -151,11 +151,6 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppCoreBase):
             ))
 
         all_plugins_html = '\n'.join(all_plugins_html_list)
-
-        # print('')
-        # print(all_plugins_html)
-        # print('')
-
         return super(PyWebBrowserAppWithPluginsBase, self).generate_html_file(template_filename, all_plugins_html)
 
     def load_python_plugin_code(self, plugin_name, src_plugin_path):
