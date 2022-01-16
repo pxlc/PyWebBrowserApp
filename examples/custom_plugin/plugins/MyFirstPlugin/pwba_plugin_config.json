@@ -9,9 +9,9 @@
             "class": "${P}_popup"
         }
     },
-    "bootstrap": {
+    "skyblue": {
         "popup": {
-            "class": "container ${P}_popup"
+            "class": "${P}_popup skyblue"
         }
     }
 }

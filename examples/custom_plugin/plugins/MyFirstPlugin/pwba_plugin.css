@@ -4,3 +4,10 @@
     color: brown;
     padding: 10px;
 }
+
+.skyblue {
+    background-color: lightskyblue;
+    border-radius: 4px;
+    padding: 20px;
+    border: 1px solid darkblue;
+}

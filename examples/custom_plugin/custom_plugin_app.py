@@ -55,7 +55,7 @@ class CustomPyWebBrowserApp(PyWebBrowserAppBase):
                                                     on_start_options_d=on_start_options_d)
 
         # Do any required data set-up for your app here
-        self.request_plugin('MyFirstPlugin')
+        self.request_plugin('MyFirstPlugin', variation='skyblue')
 
     # --------------------------------------------------------------------------------------------------------
     # "setup_extra_template_vars()" is a REQUIRED override method
