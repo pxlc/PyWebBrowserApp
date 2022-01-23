@@ -59,6 +59,16 @@ function ${P}() {
         _self.modal_screen_div.style.display = "block";
     };
 
+    _self.is_visible = function()
+    {
+        if (! _self.modal_screen_div) {
+            _self.modal_screen_div = document.getElementById("id_${P}_modal_screen");
+        }
+        if (_self.modal_screen_div.style.display == "block")
+            return true;
+        return false;
+    };
+
     _self.hide = function()
     {
         if (! _self.modal_screen_div) {
