@@ -61,7 +61,13 @@ def launch_app(app_module_path, shell_logging=False, log_level_str='ERROR', conf
     if height:
         options['height'] = height
 
+    os.environ['PWBA_APP_MODULE_PATH'] = app_module_path
+
     app = app_module.CustomPyWebBrowserApp(app_module_path, **options)
+    app_module.g_app_instance = app
+
     app.launch()
+
+    return app
 
 
