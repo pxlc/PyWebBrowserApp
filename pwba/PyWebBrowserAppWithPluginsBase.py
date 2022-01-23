@@ -68,6 +68,7 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppCoreBase):
         self.active_plugins_root = os.path.join(self.session_temp_root, 'plugins').replace('\\', '/')
 
         self.plugin_list = []
+
         self.plugin_info_by_name = {}
         self.plugin_instance_by_name = {}
 
@@ -185,7 +186,13 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppCoreBase):
                 print('    adding op: %s' % op_name)
                 self.add_op_handler(op_name, attr)
 
-    def request_plugin(self, plugin_name, variation='default'):
+    def request_plugin(self, plugin_name, variation='default', nested_required_plugins_stack=None):
+
+        if plugin_name in self.plugin_list:
+            print('::')
+            print(':: Plugin "%s" has already been requested.')
+            print('::')
+            return
 
         self.plugin_list.append(plugin_name)
         self.plugin_info_by_name[plugin_name] = {}
@@ -204,6 +211,32 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppCoreBase):
             del self.plugin_info_by_name[plugin_name]
             return
 
+        requires_filepath = '%s/pwba_plugin_requires.txt' % plugin_path
+        required_plugins = []
+        if os.path.isfile(requires_filepath):
+            with open(requires_filepath, 'r') as in_fp:
+                required_plugins = [p.strip() for p in in_fp.readlines() if p.strip()]
+
+            if required_plugins:
+                if nested_required_plugins_stack is None:
+                    nested_required_plugins_stack = [plugin_name]
+                else:
+                    nested_required_plugins_stack.append(plugin_name)
+
+            for req_plugin in required_plugins:
+                variation = 'default'
+                if ':' in req_plugin:
+                    bits = req_plugin.split(':')
+                    req_plugin = bits[0]
+                    if bits[1].startswith('variation='):
+                        variation = bits[1].split('=')[1]
+
+                if req_plugin in nested_required_plugins_stack:
+                    raise Exception('Cyclical "plugin requires" dependency in requiring "%s" (stack already has: %s)' %
+                                    (req_plugin, nested_required_plugins_stack))
+
+                self.request_plugin(req_plugin, variation=variation,
+                                    nested_required_plugins_stack=nested_required_plugins_stack)
         info_pairs = [
             ('html_path', '%s/pwba_plugin.html' % plugin_path),
             ('css_path', '%s/pwba_plugin.css' % plugin_path),
