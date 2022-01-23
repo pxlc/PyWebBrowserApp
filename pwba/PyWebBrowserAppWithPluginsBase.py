@@ -172,7 +172,7 @@ class PyWebBrowserAppWithPluginsBase(PyWebBrowserAppCoreBase):
         plugin_module = importlib.import_module(plugin_module_name)
 
         plugin_instance = plugin_module.Plugin()
-        plugin_instance._connect_to_app(plugin_name, self.send_to_webbrowser, self.debug, self.info,
+        plugin_instance._connect_to_app(plugin_name, self, self.send_to_webbrowser, self.debug, self.info,
                                         self.warning, self.error, self.critical)
 
         self.plugin_instance_by_name[plugin_name] = plugin_instance

@@ -3,10 +3,13 @@ class PluginBase(object):
 
     def __init__(self):
 
-        pass
+        self._app_instance = None
+        self.plugin_name = None
+        self.app_functions = None
 
-    def _connect_to_app(self, plugin_name, app_send_to_webbrowser, debug, info, warning, error, critical):
+    def _connect_to_app(self, plugin_name, app_instance, app_send_to_webbrowser, debug, info, warning, error, critical):
 
+        self._app_instance = app_instance
         self.plugin_name = plugin_name
 
         self.app_functions = {
@@ -37,4 +40,8 @@ class PluginBase(object):
 
         plugin_op = 'Plugin|%s|%s' % (self.plugin_name, plugin_js_function_name)
         self.app_functions['send_to_webbrowser'](plugin_op, op_data)
+
+    def get_app_instance(self):
+
+        return self._app_instance
 
