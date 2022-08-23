@@ -213,6 +213,7 @@ class PyWebBrowserAppCoreBase(object):
                 '/usr/bin/microsoft-edge-dev',
             ],
             'darwin': [
+                '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
                 '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser'
             ]
         }
