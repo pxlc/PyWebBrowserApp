@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # MIT License
 #
 # Copyright (c) 2018-2021 pxlc@github
@@ -20,7 +20,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 import os
 import sys
@@ -42,7 +42,8 @@ from .get_js import get_js_file_url
 from .config import load_config_file
 from .util import get_next_port_num
 
-PYWEBBROWSERAPP_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('\\', '/')
+PYWEBBROWSERAPP_ROOT = os.path.dirname(os.path.dirname(
+                            os.path.abspath(__file__))).replace('\\', '/')
 print('')
 print('[PYWEBBROWSERAPP_ROOT]: %s' % PYWEBBROWSERAPP_ROOT)
 print('')
@@ -53,28 +54,36 @@ class PyWebBrowserAppCoreBase(object):
     JS_FILE_URL = '%s/js/py_webbrowser_app.js' % PYWEBBROWSERAPP_ROOT
     PYWEBBROWSERAPP_ROOT = PYWEBBROWSERAPP_ROOT
 
-    def __init__(self, app_module_filepath, webbrowser_path='', width=480, height=600, template_dirpath='',
-                 start_html_filename='', config_filepath='', log_to_shell=False, log_level_str='',
+    def __init__(self, app_module_filepath, webbrowser_path='',
+                 width=480, height=600, template_dirpath='',
+                 start_html_filename='', config_filepath='',
+                 log_to_shell=False, log_level_str='',
                  app_temp_root='', webbrowser_data_path=''):
 
-        self.webbrowser_path = webbrowser_path if webbrowser_path else self._get_webbrowser_exe_path()
+        self.webbrowser_path = (webbrowser_path if webbrowser_path
+                                    else self._get_webbrowser_exe_path())
 
         self.browser_name_tag = ''
         self.webbrowser_data_path = ''
 
         if not self.webbrowser_path:
-            raise Exception('Chromium browser not found in common locations ... unable to run.')
+            raise Exception('Chromium browser not found in common locations '
+                            '... unable to run.')
         elif not os.path.isfile(self.webbrowser_path):
-            raise Exception('Cannot find "%s" Chromium browser on this computer ... unable to run.')
+            raise Exception('Cannot find "%s" Chromium browser on this '
+                            'computer ... unable to run.' %
+                            self.webbrowser_path)
 
-        self.browser_name_tag = os.path.basename(self.webbrowser_path).split('.')[0]
+        self.browser_name_tag = os.path.basename(
+                                    self.webbrowser_path).split('.')[0]
 
         self.app_module_filepath = app_module_filepath.replace('\\','/')
         self.app_dir_path = os.path.dirname(self.app_module_filepath)
         self.app_module_filename = os.path.basename(self.app_module_filepath)
 
         cap_words = [ w.capitalize() for w in
-                            self.app_module_filename.replace('_app.py','').replace('.py','').split('_') ]
+                        self.app_module_filename.replace(
+                            '_app.py','').replace('.py','').split('_') ]
 
         self.app_short_name = ''.join(cap_words)
         self.app_title_label = ' '.join(cap_words)  # default App Title
@@ -83,25 +92,35 @@ class PyWebBrowserAppCoreBase(object):
 
         self.user = getpass.getuser()
 
-        tmpl_dir_path = template_dirpath if template_dirpath else self.app_dir_path
-        self.j2_template_env = jinja2.Environment(loader=jinja2.FileSystemLoader(tmpl_dir_path))
+        tmpl_dir_path = (template_dirpath if template_dirpath
+                                            else self.app_dir_path)
+        self.j2_template_env = jinja2.Environment(
+                                loader=jinja2.FileSystemLoader(tmpl_dir_path))
 
         self.port = get_next_port_num(self.config)
 
         self.session_start_dt_str = util.now_datetime_str('compact')
-        self.session_id = '{a}_{u}_{dt}'.format(a=self.app_short_name, u=self.user, dt=self.session_start_dt_str)
+        self.session_id = '{a}_{u}_{dt}'.format(a=self.app_short_name,
+                                u=self.user, dt=self.session_start_dt_str)
 
-        self.app_temp_root = app_temp_root if app_temp_root else util.get_app_user_temp_path(self.app_short_name)
+        self.app_temp_root = (app_temp_root if app_temp_root
+                        else util.get_app_user_temp_path(self.app_short_name))
 
         # establish session folder
-        session_foldername = '{a}_session_{dt}'.format(a=self.app_short_name, dt=self.session_start_dt_str)
-        self.session_temp_root = os.path.join(self.app_temp_root, session_foldername).replace('\\', '/')
+        session_foldername = '{a}_session_{dt}'.format(a=self.app_short_name,
+                                    dt=self.session_start_dt_str)
+
+        self.session_temp_root = os.path.join(
+                                    self.app_temp_root,
+                                    session_foldername).replace('\\', '/')
 
         if webbrowser_data_path:
-            self.webbrowser_data_path = '%s_%s' % (webbrowser_data_path, self.browser_name_tag)
+            self.webbrowser_data_path = '%s_%s' % (webbrowser_data_path,
+                                                   self.browser_name_tag)
         else:
             self.webbrowser_data_path = os.path.join(self.session_temp_root,
-                                                     '_browser_data_%s' % self.browser_name_tag)
+                                                     '_browser_data_%s' %
+                                                        self.browser_name_tag)
         # use session_id as logger name
         log_filename = 'session_%s.log' % self.session_start_dt_str
         self.log_file = '%s/%s' % (self.session_temp_root, log_filename)
@@ -117,17 +136,21 @@ class PyWebBrowserAppCoreBase(object):
             os.makedirs(log_dirpath)
 
         log_level_map = {
-            'DEBUG': logging.DEBUG, 'INFO': logging.INFO, 'WARNING': logging.WARNING, 'ERROR': logging.ERROR,
+            'DEBUG': logging.DEBUG, 'INFO': logging.INFO,
+            'WARNING': logging.WARNING, 'ERROR': logging.ERROR,
             'CRITICAL': logging.CRITICAL
         }
         log_level = logging.ERROR
         if log_level_str in log_level_map:
             log_level = log_level_map.get(log_level_str)
 
-        self.logger = logging.getLogger('{a}{dt}'.format(a=self.app_short_name,
-                                                         dt=self.session_start_dt_str.replace('_','')))
+        self.logger = logging.getLogger('{a}{dt}'.format(
+                                a=self.app_short_name,
+                                dt=self.session_start_dt_str.replace('_','')))
+
         self.logger.setLevel( log_level )
-        util.setup_logger(self.logger, self.log_file, log_level, log_to_shell=log_to_shell)
+        util.setup_logger(self.logger, self.log_file, log_level,
+                          log_to_shell=log_to_shell)
 
         self.session_file_path_pre = self.log_file.replace('.log', '')
         self.session_temp_dir_path = os.path.dirname(self.log_file)
@@ -152,13 +175,15 @@ class PyWebBrowserAppCoreBase(object):
 
         self.webbrowser_process = None
 
-        self.start_html_fname = start_html_filename if start_html_filename else self.auto_template_filename()
+        self.start_html_fname = (start_html_filename if start_html_filename
+                                    else self.auto_template_filename())
 
         self._setup_op_handlers()
 
     def setup_extra_template_vars(self):
 
-        raise Exception('method setup_extra_template_vars() MUST be overridden in sub-class.')
+        raise Exception('method setup_extra_template_vars() MUST be '
+                        'overridden in sub-class.')
 
     def _setup_op_handlers(self):
 
@@ -166,7 +191,8 @@ class PyWebBrowserAppCoreBase(object):
         for attr_name in dir(self):
             attr = getattr(self, attr_name)
             if 'bound method' in str(attr) and hasattr(attr, '_op_name'):
-                op_name = attr._op_name.split('.')[1] if '.' in attr._op_name else attr._op_name
+                op_name = (attr._op_name.split('.')[1] if '.' in attr._op_name
+                                else attr._op_name)
                 print('    adding op: %s' % op_name)
                 self.add_op_handler(op_name, attr)
 
@@ -185,9 +211,13 @@ class PyWebBrowserAppCoreBase(object):
             'linux2': [
                 '/usr/bin/chromium',
                 '/usr/bin/microsoft-edge-dev',
+            ],
+            'darwin': [
+                '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser'
             ]
         }
-        webbrowser_path_list = webbrowser_paths_by_platform.get(sys.platform, [])
+        webbrowser_path_list = webbrowser_paths_by_platform.get(
+                                                            sys.platform, [])
         webbrowser_path = ''
 
         for c_path in webbrowser_path_list:
@@ -199,7 +229,8 @@ class PyWebBrowserAppCoreBase(object):
 
     def auto_template_filename(self):
 
-        return 'T_{0}.html'.format(self.app_module_filename.replace('_app.py','').replace('.py',''))
+        return 'T_{0}.html'.format(
+            self.app_module_filename.replace('_app.py','').replace('.py',''))
 
     def generate_html_file(self, template_filename, all_plugins_html=''):
 
@@ -244,17 +275,23 @@ class PyWebBrowserAppCoreBase(object):
 
         if not self.webbrowser_client:
             self.webbrowser_client = client
-            msg_obj = {'op': 'connection_status', 'session_id': self.session_id, 'data': {'status': 'CONNECTED'}}
+            msg_obj = {
+                'op': 'connection_status',
+                'session_id': self.session_id,
+                'data': {'status': 'CONNECTED'}
+            }
             self.ws_server.send_message(client, json.dumps(msg_obj))
 
     def clean_up(self):
 
-        cleanup_script_path = '%s/bin/_cleanup_session_data.py' % PYWEBBROWSERAPP_ROOT
+        cleanup_script_path = ('%s/bin/_cleanup_session_data.py' %
+                                PYWEBBROWSERAPP_ROOT)
         python_exe_path = sys.executable
 
         if sys.platform == 'win32':
-            system_command_str = 'START /B "" "%s" "%s" "%s"' % (python_exe_path, cleanup_script_path,
-                                                              self.session_temp_root)
+            system_command_str = ('START /B "" "%s" "%s" "%s"' %
+                                    (python_exe_path, cleanup_script_path,
+                                     self.session_temp_root))
             os.system(system_command_str)
         else:
             # TODO: support session data cleanup on Linux/MacOS
@@ -277,9 +314,10 @@ class PyWebBrowserAppCoreBase(object):
         try:
             msg_data = json.loads(message)
         except:
-            self.error('>>> ERROR: Unable to read data message from web browser client:\n\n%s' %
-                        traceback.format_exc())
-            self.error('>>> Here is the message string: @%s@ (type is %s)' % (message, type(message)))
+            self.error('>>> ERROR: Unable to read data message from web '
+                       'browser client:\n\n%s' % traceback.format_exc())
+            self.error('>>> Here is the message string: @%s@ (type is %s)' %
+                        (message, type(message)))
             return
 
         op = msg_data.get('op')
@@ -287,35 +325,40 @@ class PyWebBrowserAppCoreBase(object):
         op_data = msg_data.get('data', {})
 
         if not op or not session_id or type(op_data) is not dict:
-            self.error('in PyWebBrowserApp._ws_message_from_client() ... no op or no session_id or op_data is not' \
-                        ' a dictionary.')
+            self.error('in PyWebBrowserApp._ws_message_from_client() ... '
+                       'no op or no session_id or op_data is not'
+                       ' a dictionary.')
             return
         if session_id != self.session_id:
-            self.error('in PyWebBrowserApp._ws_message_from_client() ... incoming session_id ("%s") is not the same' \
-                        ' as this app\'s stored session_id ("%s")' % (session_id, self.session_id))
+            self.error('in PyWebBrowserApp._ws_message_from_client() ... '
+                       'incoming session_id ("%s") is not the same '
+                       'as this app\'s stored session_id ("%s")' %
+                            (session_id, self.session_id))
             return
 
         # make sure the op has been registered, send error message if not
         if op not in self.op_handler_info:
-            self.error('>>> ERROR: No op handler registered for op "%s" ... unable to process op' % op)
+            self.error('>>> ERROR: No op handler registered for op "%s" '
+                       '... unable to process op' % op)
             return
 
         # delegate operation and its data to handler function
         try:
             fn = self.op_handler_info.get(op, {}).get('cb_fn')
         except:
-            self.error('>>> ERROR: Exception raised running "%s" op handler:\n\n%s' %
-                        (op, traceback.format_exc()))
+            self.error('>>> ERROR: Exception raised running "%s" op '
+                       'handler:\n\n%s' % (op, traceback.format_exc()))
             return
 
         if fn:
             try:
                 fn(op_data)
             except:
-                self.error('>>> ERROR: Exception raised running "%s" op handler:\n\n%s' %
-                            (op, traceback.format_exc()))
+                self.error('>>> ERROR: Exception raised running "%s" op '
+                           'handler:\n\n%s' % (op, traceback.format_exc()))
         else:
-            self.error('>>> ERROR: No function found for registered op handler "%s" ... unable to process op' % op)
+            self.error('>>> ERROR: No function found for registered op '
+                       'handler "%s" ... unable to process op' % op)
 
     def set_app_title(self, title):
         self.app_title_label = title
@@ -342,7 +385,8 @@ class PyWebBrowserAppCoreBase(object):
         return self.JS_FILE_URL
 
     def build_session_filepath(self, file_suffix, file_ext):
-        return '{pre}_{suf}{ext}'.format(pre=self.session_file_path_pre, suf=file_suffix, ext=file_ext)
+        return '{pre}_{suf}{ext}'.format(pre=self.session_file_path_pre,
+                                         suf=file_suffix, ext=file_ext)
 
     def add_op_handler(self, op, op_callback_fn):
 
@@ -358,7 +402,10 @@ class PyWebBrowserAppCoreBase(object):
             self.warning('No webbrowser_client to send to!')
             return
 
-        msg_data_str = json.dumps({'op': webbrowser_op, 'session_id': self.session_id, 'data': webbrowser_op_data})
+        msg_data_str = json.dumps({'op': webbrowser_op,
+                                   'session_id': self.session_id,
+                                   'data': webbrowser_op_data})
+
         self.ws_server.send_message(self.webbrowser_client, msg_data_str)
 
     def start_(self):
@@ -366,9 +413,12 @@ class PyWebBrowserAppCoreBase(object):
         try:
             webbrowser_exe_path = self.webbrowser_path
 
-            webbrowser_data_dir = self.webbrowser_data_path if self.webbrowser_data_path \
-                                    else os.path.join(self.config.get('user_temp_root', os.getenv('TEMP')),
-                                                      '_webbrowser_app_user_data')
+            webbrowser_data_dir = (self.webbrowser_data_path
+                                    if self.webbrowser_data_path
+                                    else os.path.join(
+                                        self.config.get('user_temp_root',
+                                                        os.getenv('TEMP')),
+                                        '_webbrowser_app_user_data'))
 
             if not os.path.isdir(webbrowser_data_dir):
                 os.makedirs(webbrowser_data_dir)
@@ -378,18 +428,21 @@ class PyWebBrowserAppCoreBase(object):
                 '--allow-file-access-from-files',
                 '--window-size={w},{h}'.format(w=self.width, h=self.height),
                 '--user-data-dir={0}'.format(webbrowser_data_dir),
-                '--app=file:///{0}'.format(self.generate_html_file(self.start_html_fname)),
+                '--app=file:///{0}'.format(self.generate_html_file(
+                                                    self.start_html_fname)),
             ]
 
             if sys.platform == 'win32':
                 SEM_NOGPFAULTERRORBOX = 0x0002 # From MSDN
-                ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX);
+                ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX)
                 CREATE_NO_WINDOW = 0x08000000 # From Windows API
-                subprocess_flags = CREATE_NO_WINDOW | subprocess.CREATE_NEW_PROCESS_GROUP
+                subprocess_flags = \
+                    CREATE_NO_WINDOW | subprocess.CREATE_NEW_PROCESS_GROUP
             else:
                 subprocess_flags = 0
                 
-            self.webbrowser_process = subprocess.Popen(cmd_arr, creationflags=subprocess_flags)
+            self.webbrowser_process = subprocess.Popen(cmd_arr,
+                                            creationflags=subprocess_flags)
             self.ws_server.run_forever()
         except:
             self.error('')
@@ -415,10 +468,10 @@ class PyWebBrowserAppCoreBase(object):
         }
 
         if log_level not in log_fn_by_level:
-            self.warning('Unknown log level "%s" received ... message follows ...')
+            self.warning('Unknown log level "%s" received ... '
+                         'message follows ...' % log_level)
             self.warning(message)
             return
 
         log_fn_by_level[log_level](message)
-
 
